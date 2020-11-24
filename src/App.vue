@@ -15,7 +15,7 @@
       :show-indicators="false"
       @change="handleChangeSwiper"
     >
-      <van-swipe-item><c-guide></c-guide></van-swipe-item>
+      <!-- <van-swipe-item><c-guide></c-guide></van-swipe-item> -->
       <van-swipe-item
         ><c-play @touchable="onTouchableChange"></c-play
       ></van-swipe-item>
@@ -24,17 +24,17 @@
 </template>
 
 <script>
-import guide from '@/page/guide/index.vue'
+// import guide from '@/page/guide/index.vue'
 import play from '@/page/play/index.vue'
 export default {
   name: 'App',
   components: {
-    'c-guide': guide,
+    // 'c-guide': guide,
     'c-play': play
   },
   data () {
     return {
-      touchable: true
+      touchable: false
     }
   },
   // created: {
