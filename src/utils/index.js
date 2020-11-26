@@ -47,22 +47,19 @@ const generate = (data) => {
       record = {
         score: 0,
         hit: 0,
-        posititon: -11,
-        points: []
+        posititon: -11
       }
     } else if (strength <= Tthreshold && strength >= Bthreshold) {
       record = {
         score: 0,
         hit: 0,
-        posititon: -11,
-        points: []
+        posititon: -11
       }
     } else {
       record = {
         score: 0,
         hit: 0,
-        posititon: 12,
-        points: []
+        posititon: 12
       }
     }
   } else if (angle >= LAngle && angle <= LMAngle) {
@@ -73,32 +70,34 @@ const generate = (data) => {
       record = {
         score: 0,
         hit: 0,
-        posititon: 11,
-        points: []
+        posititon: 11
       }
     } else if (strength <= Tthreshold && strength >= Mthreshold) {
+      const lt = positions.lt
+      const _hit = random(lt.putout, lt.frame)
       // 方向是踢向 -> LT
       record = {
-        score: 0,
-        hit: 0,
-        posititon: 1,
-        points: []
+        score: !_hit ? lt.score : 0,
+        hit: _hit,
+        posititon: 1
       }
     } else if (strength < Mthreshold && strength >= Bthreshold) {
       // 方向是踢向 -> LB
+      const lb = positions.lb
+      const _hit = random(lb.putout, lb.frame)
+      // 方向是踢向 -> LT
       record = {
-        score: 0,
-        hit: 0,
-        posititon: 2,
-        points: []
+        score: !_hit ? lb.score : 0,
+        hit: _hit,
+        posititon: 2
       }
     } else {
       // 短了
       record = {
         score: 0,
         hit: 0,
-        posititon: 12,
-        points: []
+        posititon: 12
+
       }
     }
   } else if (angle > LMAngle && angle < RMAngle) {
@@ -109,32 +108,37 @@ const generate = (data) => {
       record = {
         score: 0,
         hit: 0,
-        posititon: 11,
-        points: []
+        posititon: 11
+
       }
     } else if (strength <= Tthreshold && strength >= Mthreshold) {
       // 方向是踢向 -> MT
+      const mt = positions.mt
+      const _hit = random(mt.putout, mt.frame)
+      // 方向是踢向 -> LT
       record = {
-        score: 0,
-        hit: 0,
-        posititon: 3,
-        points: []
+        score: !_hit ? mt.score : 0,
+        hit: _hit,
+        posititon: 3
+
       }
     } else if (strength < Mthreshold && strength >= Bthreshold) {
       // 方向是踢向 -> MB
+      const mb = positions.mb
+      const _hit = random(mb.putout, mb.frame)
+      // 方向是踢向 -> LT
       record = {
-        score: 0,
-        hit: 0,
-        posititon: 4,
-        points: []
+        score: !_hit ? mb.score : 0,
+        hit: _hit,
+        posititon: 4
       }
     } else {
       // 短了
       record = {
         score: 0,
         hit: 0,
-        posititon: 12,
-        points: []
+        posititon: 12
+
       }
     }
   } else if (angle >= RMAngle && angle <= RAngle) {
@@ -145,32 +149,34 @@ const generate = (data) => {
       record = {
         score: 0,
         hit: 0,
-        posititon: 11,
-        points: []
+        posititon: 11
       }
     } else if (strength <= Tthreshold && strength >= Mthreshold) {
       // 方向是踢向 -> RT
+      const rt = positions.rt
+      const _hit = random(rt.putout, rt.frame)
+      // 方向是踢向 -> LT
       record = {
-        score: 0,
-        hit: 0,
-        posititon: 5,
-        points: []
+        score: !_hit ? rt.score : 0,
+        hit: _hit,
+        posititon: 5
       }
     } else if (strength < Mthreshold && strength >= Bthreshold) {
       // 方向是踢向 -> RB
+      const rb = positions.rb
+      const _hit = random(rb.putout, rb.frame)
+      // 方向是踢向 -> LT
       record = {
-        score: 0,
-        hit: 0,
-        posititon: 6,
-        points: []
+        score: !_hit ? rb.score : 0,
+        hit: _hit,
+        posititon: 6
       }
     } else {
       // 短了
       record = {
         score: 0,
         hit: 0,
-        posititon: 12,
-        points: []
+        posititon: 12
       }
     }
   } else if (angle > RAngle) {
@@ -179,22 +185,19 @@ const generate = (data) => {
       record = {
         score: 0,
         hit: 0,
-        posititon: -21,
-        points: []
+        posititon: -21
       }
     } else if (strength <= Tthreshold && strength >= Bthreshold) {
       record = {
         score: 0,
         hit: 0,
-        posititon: -21,
-        points: []
+        posititon: -21
       }
     } else {
       record = {
         score: 0,
         hit: 0,
-        posititon: 12,
-        points: []
+        posititon: 12
       }
     }
   }
@@ -210,32 +213,38 @@ const positions = {
   lt: {
     hitrate: 50,
     score: 10,
-    putout: 5
+    putout: 5,
+    frame: 10
   },
   lb: {
-    hitrate: 7,
-    score: 70,
-    putout: 10
+    hitrate: 70,
+    score: 7,
+    putout: 10,
+    frame: 10
   },
   mt: {
     hitrate: 90,
     score: 5,
-    putout: 15
+    putout: 15,
+    frame: 10
   },
   mb: {
     hitrate: 90,
     score: 5,
-    putout: 15
+    putout: 15,
+    frame: 0
   },
   rt: {
     hitrate: 50,
     score: 10,
-    putout: 5
+    putout: 5,
+    frame: 10
   },
   rb: {
     hitrate: 70,
     score: 7,
-    putout: 10
+    putout: 10,
+    frame: 10
   }
 }
 
@@ -251,7 +260,7 @@ const inside = (point, vs) => {
     var xj = vs[j][0]; var yj = vs[j][1]
 
     var intersect = ((yi > y) !== (yj > y)) &&
-            (x < (xj - xi) * (y - yi) / (yj - yi) + xi)
+      (x < (xj - xi) * (y - yi) / (yj - yi) + xi)
     if (intersect) inside = !inside
   }
 
@@ -264,18 +273,18 @@ const randomNum = (minNum, maxNum) => {
 
 // 门框范围内 随机点
 const getAreaPointByPos = (actualwidth, goalwidth, goalheight, goalbottom, pos) => {
-  const posLT = [randomNum(actualwidth * 0.5 - goalwidth * 0.5, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33), randomNum(
-    goalbottom + goalheight * 0.5,
+  const posLT = [randomNum(actualwidth * 0.5 - goalwidth * 0.475, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33), randomNum(
+    goalbottom + goalheight * 0.475,
     goalheight + goalbottom
   )]
 
-  const posLB = [randomNum(actualwidth * 0.5 - goalwidth * 0.5, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33), randomNum(
+  const posLB = [randomNum(actualwidth * 0.5 - goalwidth * 0.475, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33), randomNum(
     goalbottom,
     goalbottom + goalheight * 0.5
   )]
 
   const posMT = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66), randomNum(
-    goalbottom + goalheight * 0.5,
+    goalbottom + goalheight * 0.475,
     goalheight + goalbottom
   )]
 
@@ -284,12 +293,12 @@ const getAreaPointByPos = (actualwidth, goalwidth, goalheight, goalbottom, pos) 
     goalbottom + goalheight * 0.5
   )]
 
-  const posRT = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66, actualwidth * 0.5 + goalwidth * 0.5), randomNum(
-    goalbottom + goalheight * 0.5,
+  const posRT = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66, actualwidth * 0.5 + goalwidth * 0.475), randomNum(
+    goalbottom + goalheight * 0.475,
     goalheight + goalbottom
   )]
 
-  const posRB = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66, actualwidth * 0.5 + goalwidth * 0.5), randomNum(
+  const posRB = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66, actualwidth * 0.5 + goalwidth * 0.475), randomNum(
     goalbottom,
     goalbottom + goalheight * 0.5
   )]
@@ -323,8 +332,24 @@ const getOuterPointByPos = (actualwidth, goalwidth, goalheight, goalbottom, angl
   return pos === -11 ? posLT : pos === -12 ? posLB : pos === 11 ? posMT : pos === 12 ? posMB : pos === -21 ? posRT : pos === -22 ? posRB : [0, 0]
 }
 
+/**
+ * 随机函数，0：命中   1：扑出   2：门框
+ * @param {*} putout
+ * @param {*} frame
+ */
+const random = (putout, frame) => {
+  const _r = parseInt(Math.random() * 100, 10)
+  if (_r >= 0 && _r < putout) return 1
+  else if (_r >= putout && _r < putout + frame) return 2
+  return 0
+}
+
+const toInt = (array) => {
+  return array.map(item => parseInt(item, 10))
+}
+
 // 模拟的路径点点结合
 // 这里用二阶贝塞尔 也就需要4个点位置
 // 模拟点暂定为26个 左3 右3各为提出场外的路径点
 
-export { analysis, generate, inside, randomNum, getAreaPointByPos, getOuterPointByPos }
+export { analysis, generate, inside, randomNum, getAreaPointByPos, getOuterPointByPos, toInt }

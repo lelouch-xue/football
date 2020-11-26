@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import './utils/vant'
 import './utils/hammer'
-import './utils/vconsole'
+// import './utils/vconsole'
 import 'lib-flexible'
 
 import '@/assets/normalize.css'
