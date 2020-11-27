@@ -292,11 +292,11 @@ export default {
       // 连个控制点
       const c1 = toInt([
         initPox[0] + (target[0] - initPox[0]) * 0.33,
-        target[1] + 120
+        target[1] + 40
       ])
       const c2 = toInt([
         initPox[0] + (target[0] - initPox[0]) * 0.66,
-        target[1] + 120
+        target[1] + 60
       ])
 
       // console.log(initPox, c1, c2, target)
@@ -313,7 +313,7 @@ export default {
       console.log(len)
       let index = 0
       let size = 1
-      const time = 50
+      const time = 25
       const soccer = this.$refs.soccer
       console.log(points)
       this.timer = setInterval(() => {
@@ -348,7 +348,7 @@ export default {
         }px) scale(${size})`
         index++
 
-        if (size >= 0.12) size -= 0.1
+        if (size >= 0.26) size -= 0.05
       }, time)
     },
     handleReset () {
@@ -468,7 +468,7 @@ export default {
       const _points = bezier.getBezierPoints(6, point, _cpos, _bottomPos)
       const len = _points.length
 
-      const time = 30
+      const time = 25
       const soccer = this.$refs.soccer
       let index = 0
 

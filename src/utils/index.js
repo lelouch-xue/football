@@ -273,19 +273,19 @@ const randomNum = (minNum, maxNum) => {
 
 // 门框范围内 随机点
 const getAreaPointByPos = (actualwidth, goalwidth, goalheight, goalbottom, pos) => {
-  const posLT = [randomNum(actualwidth * 0.5 - goalwidth * 0.475, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33), randomNum(
-    goalbottom + goalheight * 0.475,
-    goalheight + goalbottom
+  const posLT = [randomNum(actualwidth * 0.5 - goalwidth * 0.275, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33), randomNum(
+    goalbottom + goalheight * 0.5,
+    goalbottom + goalheight * 0.775
   )]
 
-  const posLB = [randomNum(actualwidth * 0.5 - goalwidth * 0.475, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33), randomNum(
+  const posLB = [randomNum(actualwidth * 0.5 - goalwidth * 0.275, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33), randomNum(
     goalbottom,
     goalbottom + goalheight * 0.5
   )]
 
   const posMT = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66), randomNum(
-    goalbottom + goalheight * 0.475,
-    goalheight + goalbottom
+    goalbottom + goalheight * 0.5,
+    goalbottom + goalheight * 0.775
   )]
 
   const posMB = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66), randomNum(
@@ -293,12 +293,12 @@ const getAreaPointByPos = (actualwidth, goalwidth, goalheight, goalbottom, pos) 
     goalbottom + goalheight * 0.5
   )]
 
-  const posRT = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66, actualwidth * 0.5 + goalwidth * 0.475), randomNum(
-    goalbottom + goalheight * 0.475,
-    goalheight + goalbottom
+  const posRT = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66, actualwidth * 0.5 + goalwidth * 0.275), randomNum(
+    goalbottom + goalheight * 0.5,
+    goalbottom + goalheight * 0.775
   )]
 
-  const posRB = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66, actualwidth * 0.5 + goalwidth * 0.475), randomNum(
+  const posRB = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66, actualwidth * 0.5 + goalwidth * 0.275), randomNum(
     goalbottom,
     goalbottom + goalheight * 0.5
   )]
@@ -308,26 +308,26 @@ const getAreaPointByPos = (actualwidth, goalwidth, goalheight, goalbottom, pos) 
 
 // 门框外随机点 包括左侧 中上 中下 右侧
 const getOuterPointByPos = (actualwidth, goalwidth, goalheight, goalbottom, angle, stresh, ballPosX, ballPosY, pos) => {
-  const posLT = [randomNum(actualwidth * -0.35, ballPosX - goalwidth * 0.3), randomNum(
+  const posLT = [randomNum(actualwidth * -0.05, ballPosX - goalwidth * 0.3), randomNum(
     goalbottom,
     goalheight + goalbottom
   )]
 
-  const posLB = [randomNum(ballPosX - goalwidth * 0.3, ballPosX - goalwidth * 0.5), ballPosY + (goalbottom - ballPosY) * stresh / 100]
+  const posLB = [randomNum(ballPosX - goalwidth * 0.25, ballPosX - goalwidth * 0.4), ballPosY + (goalbottom - ballPosY) * stresh / 100]
 
   const posMT = [ballPosX + angle * goalwidth / 30, randomNum(
-    goalbottom + goalheight + 10,
-    goalbottom + goalheight + 50
+    goalbottom + goalheight + 20,
+    goalbottom + goalheight + 60
   )]
 
   const posMB = [Math.round(ballPosX + angle * goalwidth / 100), Math.round(ballPosY + (goalbottom - ballPosY) * stresh / 100)]
 
-  const posRT = [Math.round(randomNum(actualwidth * 1.35, ballPosX + goalwidth * 0.3)), Math.round(randomNum(
+  const posRT = [Math.round(randomNum(actualwidth * 1.05, ballPosX + goalwidth * 0.3)), Math.round(randomNum(
     goalbottom,
     goalheight + goalbottom
   ))]
 
-  const posRB = [randomNum(ballPosX + goalwidth * 0.3, ballPosX + goalwidth * 0.5), ballPosY + (goalbottom - ballPosY) * stresh / 100]
+  const posRB = [randomNum(ballPosX + goalwidth * 0.25, ballPosX + goalwidth * 0.4), ballPosY + (goalbottom - ballPosY) * stresh / 100]
 
   return pos === -11 ? posLT : pos === -12 ? posLB : pos === 11 ? posMT : pos === 12 ? posMB : pos === -21 ? posRT : pos === -22 ? posRB : [0, 0]
 }
