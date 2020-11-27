@@ -58,7 +58,7 @@ export default {
   .swiper-tip {
     background-image: url("../../assets/imgs/bottom.png");
     width: 12vw;
-    height: 18vw;
+    height: 12vw;
     position: absolute;
     bottom: 8vh;
     left: 50%;
@@ -101,12 +101,12 @@ export default {
 }
 @keyframes swiper-tip-ani {
   0% {
-    bottom: 10vh;
+    bottom: 3vh;
     opacity: 1;
   }
   100% {
-    bottom: 3vh;
-    opacity: 0.4;
+    bottom: 10vh;
+    opacity: 0.8;
   }
 }
 @keyframes torule-ani {
