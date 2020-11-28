@@ -2,7 +2,7 @@
   <div class="play-page">
     <div class="next" @click="showbill"></div>
     <div class="lawn">
-      <div class="goal"></div>
+<!--      <div class="goal"></div>-->
       <div class="scoreboard">
         <div :class="'bodyStyle '+(isPlay?'play':'')">
           <div class="container">
@@ -35,10 +35,10 @@
           </div>
         </div>
       </div>
-      <div class="bigf">
-        <div class="fshade"></div>
-        <img src="../../assets/imgs/big-f.png" @click="seewin">
-      </div>
+<!--      <div class="bigf">-->
+<!--        <div class="fshade"></div>-->
+<!--        <img src="../../assets/imgs/big-f.png" @click="seewin">-->
+<!--      </div>-->
       <div class="smallf">
         <div v-for="num in smallnum">
           <img :id="num" src="../../assets/imgs/small-f.png">
