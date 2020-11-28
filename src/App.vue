@@ -19,9 +19,8 @@
       <van-swipe-item><c-guide></c-guide></van-swipe-item>
       <van-swipe-item><c-role @swipeto="swipeTo(0)"></c-role></van-swipe-item>
       <van-swipe-item><c-play @touchable="onTouchableChange"></c-play></van-swipe-item>
-      <van-swipe-item><c-playnew></c-playnew></van-swipe-item>
-      <van-swipe-item><c-showbill></c-showbill></van-swipe-item>
     </van-swipe>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -29,16 +28,12 @@
 import guide from '@/page/guide/index.vue'
 import role from '@/page/role/index.vue'
 import play from '@/page/play/index.vue'
-import playnew from '@/page/play/new.vue'
-import showbill from '@/page/showbill/index.vue'
 export default {
   name: 'App',
   components: {
     'c-guide': guide,
     'c-role': role,
-    'c-play': play,
-    'c-playnew': playnew,
-    'c-showbill': showbill
+    'c-play': play
   },
   data () {
     return {
