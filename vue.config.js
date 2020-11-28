@@ -94,17 +94,17 @@ module.exports = {
     // http 代理配置
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:3000/api',
+        // target: 'http://47.111.65.173:8080',
+        target: 'http://localhost/prod-api/',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
         }
       }
     },
-    before: (app) => {}
+    before: (app) => {
+    }
   },
   // 第三方插件配置
-  pluginOptions: {
-
-  }
+  pluginOptions: {}
 }
