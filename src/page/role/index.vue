@@ -3,18 +3,18 @@
     <div class="return" @click="toGuide"></div>
     <div class="roles">
       <div class="fbimg"></div>
-      <div class="mx-abtn" v-if="isMx" @click="setrole"></div>
-      <div class="mxbtn" v-if="!isMx" @click="setrole"></div>
-      <div class="clbtn" v-if="isMx" @click="setrole"></div>
-      <div class="cl-abtn" v-if="!isMx" @click="setrole"></div>
+      <div class="mx-abtn" v-if="isMx" @click="setrole(mxid)"></div>
+      <div class="mxbtn" v-if="!isMx" @click="setrole(mxid)"></div>
+      <div class="clbtn" v-if="isMx" @click="setrole(clid)"></div>
+      <div class="cl-abtn" v-if="!isMx" @click="setrole(clid)"></div>
     </div>
     <!--提交用户信息-->
     <div v-show="popup">
       <!--这里是要展示的内容层-->
       <div class="userform">
         <div class="closerule" @click="closepopup"></div>
-        <div><input class="username" placeholder="姓 名" /></div>
-        <div><input class="mobile" placeholder="电 话" type="number" /></div>
+        <div><input v-model="username" class="username" placeholder="姓 名" /></div>
+        <div><input v-model="mobile" class="mobile" placeholder="电 话" type="number" /></div>
         <div class="submit" @click="submit"></div>
       </div>
       <!--这里是半透明背景层-->
@@ -24,22 +24,48 @@
 </template>
 
 <script>
+import axios from 'axios'
+import { Dialog } from 'vant'
+
 export default {
   name: 'role',
+
   data () {
     return {
       isMx: true,
-      popup: 0
+      popup: 0,
+      mxid: 2,
+      clid: 1,
+      username: '',
+      mobile: ''
     }
   },
   created () {
     this.init()
   },
   methods: {
-    init () {},
+    init () {
+      axios('/api/role/list', {
+      // axios('http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Rolelist', {
+        params: {}
+      }).then(res => {
+        alert(res.data.code)
+        if (res.data.code === '0') {
+          Dialog.alert({
+            message: res.data.msg
+          }).then(() => {
+            // on close
+          })
+        }
+      })
+    },
     // 选择角色
-    setrole () {
-      this.isMx = !this.isMx
+    setrole (roleid) {
+      if (roleid === this.mxid) {
+        this.isMx = true
+      } else if (parseInt(roleid) === parseInt(this.clid)) {
+        this.isMx = false
+      }
       this.popup = 1
     },
     toGuide () {
@@ -52,7 +78,33 @@ export default {
     },
     // 提交用户信息
     submit () {
-      console.log('s')
+      if (this.mobile === 0) {
+        Dialog.alert({
+          message: '请填写手机号～'
+        }).then(() => {
+          // on close
+        })
+      } else {
+        axios({
+          url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Usersubmit',
+          method: 'post',
+          data: {
+            mobile: this.mobile,
+            sex: 1,
+            userName: this.userName
+          }
+        }).then(res => {
+          if (res.code === '0') {
+            Dialog.alert({
+              message: res.data.msg
+            }).then(() => {
+              // on close
+            })
+          } else {
+            console.log('请求结果：', res)
+          }
+        })
+      }
     }
   }
 }

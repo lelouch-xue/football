@@ -56,7 +56,7 @@ export default {
   methods: {
     handleChangeSwiper (evt) {
       console.log(evt)
-      // if (evt === 1) this.touchable = false
+      if (evt === 1) this.touchable = false
     },
     onTouchableChange (state) {
       this.touchable = true
@@ -65,8 +65,7 @@ export default {
       })
     },
     swipeTo (num) {
-      console.log(num)
-      this.initialSwipe = num
+      location.reload()
     }
   }
 }
