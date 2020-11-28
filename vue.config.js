@@ -94,8 +94,9 @@ module.exports = {
     // http 代理配置
     proxy: {
       '/api': {
-        // target: 'http://47.111.65.173:8080',
-        target: 'http://localhost/prod-api/',
+        target: 'http://47.111.65.173:8080',
+        // target: 'http://47.111.65.173/prod-api/',
+        // target: 'http://123.56.2.234/c5_201706/activitiesApi.php',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
