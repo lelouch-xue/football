@@ -20,6 +20,18 @@
       <!--这里是半透明背景层-->
       <div class="over"></div>
     </div>
+    <!--明天再来-->
+    <div v-show="popup1">
+      <!--这里是要展示的内容层-->
+      <div class="seeyou">
+        <div class="closerule" @click="closepopup"></div>
+<!--        <router-link class="submit" to='/playpage'></router-link>-->
+        <div class="submit" @click="toplay"></div>
+      </div>
+      <!--这里是半透明背景层-->
+      <div class="over"></div>
+    </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -34,6 +46,7 @@ export default {
     return {
       isMx: true,
       popup: 0,
+      popup1: 0,
       mxid: 2,
       clid: 1,
       username: '',
@@ -46,10 +59,9 @@ export default {
   methods: {
     init () {
       axios('/api/role/list', {
-      // axios('http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Rolelist', {
+      // axios('/api/dqdz/Rolelist', {
         params: {}
       }).then(res => {
-        alert(res.data.code)
         if (res.data.code === '0') {
           Dialog.alert({
             message: res.data.msg
@@ -76,9 +88,13 @@ export default {
     closepopup () {
       this.popup = 0
     },
+    toplay () {
+      this.popup1 = 0
+      this.$router.push('/playpage')
+    },
     // 提交用户信息
     submit () {
-      if (this.mobile === 0) {
+      if (this.mobile === '') {
         Dialog.alert({
           message: '请填写手机号～'
         }).then(() => {
@@ -86,22 +102,31 @@ export default {
         })
       } else {
         axios({
-          url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Usersubmit',
+          url: '/api/user/add',
+          // url: '/api/dqdz/Usersubmit',
           method: 'post',
           data: {
             mobile: this.mobile,
-            sex: 1,
-            userName: this.userName
+            sex: '1',
+            userName: this.username
           }
         }).then(res => {
-          if (res.code === '0') {
+          console.log('adf', res.data)
+          if (res.data.code === 0) {
+            if (res.data.data.isPyayFootball !== 0) {
+              // 今日已提交，明天再来
+              this.popup = 0
+              this.popup1 = 1
+            } else {
+              this.popup = 0
+              this.$router.push('/playpage')
+            }
+          } else {
             Dialog.alert({
               message: res.data.msg
             }).then(() => {
               // on close
             })
-          } else {
-            console.log('请求结果：', res)
           }
         })
       }
@@ -115,7 +140,7 @@ export default {
   background: gray;
   width: 100vw;
   height: 100vh;
-  background-image: url("../../assets/imgs/bg2.png");
+  background-image: url("../../assets/imgs/bg2.jpg");
   background-size: 100% 100%;
   position: relative;
   .return{
@@ -180,6 +205,28 @@ export default {
       height: 50px;
       bottom: 70px;
       right: 20px;
+    }
+  }
+  .seeyou{
+    position: absolute;
+    height: 140px;
+    width: 280px;
+    border-radius: 0.25rem;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background-image: url("../../assets/imgs/seeyou.png");
+    background-size: 100%;
+    .submit{
+      width: 85px;
+      height: 30px;
+      background-image: url("../../assets/imgs/goon1.png");
+      background-size: 100% 100%;
+      position: absolute;
+      left: 50%;
+      top: 60%;
+      margin-left: -45px;
     }
   }
   .userform {
