@@ -436,9 +436,9 @@ export default {
       this.isRotate = false
       this.myscore += data.score
       this.index++
-      // setTimeout(() => {
-      //   this.handleReset()
-      // }, 1000)
+      setTimeout(() => {
+        this.handleReset()
+      }, 1000)
     }
   },
   created () {
