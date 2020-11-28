@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import Play from '../page/play'
+import Play from '../page/play/new'
 // import store from '@/store';
 // in development-env not use lazy-loading,
 // because lazy-loading too many pages will cause webpack hot update too slow.

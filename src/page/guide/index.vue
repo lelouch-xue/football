@@ -26,10 +26,12 @@ export default {
   methods: {
     // 打开活动规则页面
     showpopup () {
+      this.$emit('disableSwip', false)
       this.popup = 1
     },
     // 关闭活动规则页面
     closepopup () {
+      this.$emit('disableSwip', true)
       this.popup = 0
     }
   }
