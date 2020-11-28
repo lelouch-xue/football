@@ -462,15 +462,15 @@ export default {
     }px)`
 
     this.initialPosX = actualwidth * 0.5
-    this.initialPosY = actualwidth * 0.25
-
+    this.initialPosY = actualwidth * 0.5
+    console.log(actualwidth)
     soccer.style.left = `${this.initialPosX}px`
     soccer.style.bottom = `${this.initialPosY}px`
 
     // 足球框宽 高 底
-    this.goalwidth = actualwidth * 0.6
+    this.goalwidth = actualwidth * 0.8
     this.goalheight = this.goalwidth * 0.557
-    this.goalbottom = actualheight * 0.28
+    this.goalbottom = actualheight * 0.4
 
     goal.style.width = `${this.goalwidth}px`
     goal.style.height = `${this.goalheight}px`
