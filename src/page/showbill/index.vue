@@ -14,7 +14,7 @@ export default {
   background: gray;
   width: 100vw;
   height: 100vh;
-  background-image: url("../../assets/imgs/bill.png");
+  background-image: url("../../assets/imgs/bill.jpg");
   background-size: 100% 100%;
   /*position: relative;*/
 }

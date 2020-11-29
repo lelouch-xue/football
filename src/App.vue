@@ -20,7 +20,6 @@
       <van-swipe-item><c-role @swipeto="swipeTo(0)"></c-role></van-swipe-item>
       <van-swipe-item><c-play @touchable="onTouchableChange"></c-play></van-swipe-item>
     </van-swipe>
-    <router-view></router-view>
   </div>
 </template>
 
