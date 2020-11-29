@@ -35,10 +35,10 @@
           </div>
         </div>
       </div>
-      <div class="bigf">
+      <!-- <div class="bigf">
         <div class="fshade"></div>
         <img src="../../assets/imgs/big-f.png" @click="seewin">
-      </div>
+      </div> -->
       <div class="smallf">
         <div v-for="num in smallnum">
           <img :id="num" src="../../assets/imgs/small-f.png">
@@ -58,13 +58,12 @@
     <div class="football-bg"></div>
     <section>
       <div class="football_field">
-        <img
+        <div
           ref="goal"
-          id="mying"
-          :src="require('../../assets/imgs/play/goal.png')"
+          class="goal-area"
           alt=""
-        />
-        <div class="soccer-shader"></div>
+        ></div>
+
         <div ref="soccer" class="soccer">
           <div
             :class="
@@ -77,8 +76,10 @@
             class="soccer-img"
           ></div>
         </div>
+        <div ref='shader' class="soccer-shader"></div>
+        <div ref="virturl" class="soccer-virturl" v-hammer:swipe="handleSwipe">
 
-        <div class="soccer-virturl" v-hammer:swipe="handleSwipe"></div>
+        </div>
       </div>
     </section>
   </div>
@@ -279,6 +280,14 @@ export default {
 
         if (size >= 0.26) size -= 0.05
       }, time)
+
+      // 阴影控制
+      const shader = this.$refs.shader
+      shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 40}px`
+      shader.style.left = `${this.initialPosX - 10}px`
+      shader.style.transform = 'translateX(-50%) scaleX(0)'
+      shader.style.opacity = 0
+      shader.style.transition = 'all 160ms linear'
     },
     handleReset () {
       const soccer = this.$refs.soccer
@@ -288,6 +297,13 @@ export default {
       soccer.style.transform = `translate(${this.diameter * -0.5}px, ${
         this.diameter * 0.5
       }px) scale(1)`
+
+      const shader = this.$refs.shader
+      shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 10}px`
+      shader.style.left = `${this.initialPosX - 10}px`
+      shader.style.opacity = 1
+      shader.style.transform = 'translateX(-50%) scaleX(1)'
+      shader.style.transition = 'all 0ms linear'
       console.log('reset')
     },
     putoutAni (point, data, size) {
@@ -453,6 +469,9 @@ export default {
   mounted () {
     // 此处是为了适配点做准备
     this.diameter = actualwidth * 0.25
+    this.initialPosX = actualwidth * 0.5
+    this.initialPosY = actualwidth * 0.5
+
     const soccer = this.$refs.soccer
     const goal = this.$refs.goal
     soccer.style.width = `${this.diameter}px`
@@ -460,12 +479,21 @@ export default {
     soccer.style.transform = `translate(${this.diameter * -0.5}px, ${
       this.diameter * 0.5
     }px)`
-
-    this.initialPosX = actualwidth * 0.5
-    this.initialPosY = actualwidth * 0.5
-    console.log(actualwidth)
     soccer.style.left = `${this.initialPosX}px`
     soccer.style.bottom = `${this.initialPosY}px`
+
+    const virturl = this.$refs.virturl
+    virturl.style.width = `${this.diameter}px`
+    virturl.style.height = `${this.diameter}px`
+    virturl.style.transform = `translate(${this.diameter * -0.5}px, ${
+      this.diameter * 0.5
+    }px)`
+    virturl.style.left = `${this.initialPosX}px`
+    virturl.style.bottom = `${this.initialPosY}px`
+
+    const shader = this.$refs.shader
+    shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 10}px`
+    shader.style.left = `${this.initialPosX - 10}px`
 
     // 足球框宽 高 底
     this.goalwidth = actualwidth * 0.8
@@ -496,7 +524,7 @@ export default {
 
     goal.style.transform = `translateX(${this.goalwidth * -0.5}px)`
     goal.style.left = `${actualwidth * 0.5}px`
-  },
+  }
 }
 </script>
 
@@ -826,34 +854,12 @@ div.play ul li.before .up {
     bottom: 0;
     width: 100vw;
     height: 60vh;
-    img {
+    .goal-area {
       position: absolute;
-      // bottom: 25vh;
-      // width: 70%;
-      // margin: 0 15%;
-    }
-
-    .door-area {
-      background-image: url("../../assets/imgs/play/goal.png");
+      background-image: url('../../assets/imgs/play/goal.png');
       background-size: 100% 100%;
-      position: absolute;
-      bottom: 25vh;
-      width: 70%;
-      margin: 0 auto;
-      height: 172px;
-      left: 15%;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      flex-wrap: wrap;
-
-      .door-cell {
-        width: 30%;
-        height: 48%;
-        margin: 1%;
-        background: coral;
-      }
     }
+
     .soccer {
       // width: 30vw;
       // height: 30vw;
@@ -881,15 +887,15 @@ div.play ul li.before .up {
       animation: soccerRotateL 5s linear infinite;
     }
     .soccer-shader {
-      width: 50vw;
-      height: 5vw;
-      background-image: url("../../assets/imgs/play/shader.png");
-      background-size: 100% 100%;
+      width: 2.13333rem;
+      height: 0.26667rem;
+      border-radius: 0.13333rem;
+      background: none;
+      box-shadow: 0 0.26667rem 0.26667rem #000;
       position: absolute;
-      bottom: 6vh;
-      left: 47%;
-      transform: translateX(-50%);
-      transform-origin: center;
+      transform: translateX(-50%) scaleX(1);
+      opacity: 1;
+      transition: all 150ms linear;
     }
 
     .soccer-virturl {
