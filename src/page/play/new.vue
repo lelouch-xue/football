@@ -1,6 +1,7 @@
 <template>
   <div class="play-page">
-    <div class="next" @click="showbill"></div>
+    <router-link class="next" to="/showbillpage"></router-link>
+<!--    <div @click="showbill"></div>-->
     <div class="lawn">
 <!--      <div class="goal"></div>-->
       <div class="scoreboard">
@@ -47,7 +48,7 @@
       <!--这里是要展示的内容层-->
       <div class="win">
         <div class="closerule" @click="closepopup"></div>
-        <div class="submit" @click="submit"></div>
+        <div class="submit" @click="closepopup"></div>
       </div>
       <!--这里是半透明背景层-->
       <div class="over"></div>
@@ -82,7 +83,7 @@
       <div class="overbg"></div>
       <div class="playover"></div>
     </div>
-    <router-view></router-view>
+<!--    <router-view></router-view>-->
   </div>
 </template>
 <script>
@@ -138,22 +139,14 @@ export default {
     }
   },
   methods: {
-    // 中奖
-    seewin () {
-      this.popup = 1
-    },
     // 关闭活动规则页面
     closepopup () {
       this.popup = 0
     },
-    // 提交用户信息
-    submit () {
-      console.log('s')
-    },
     // 打开海报
-    showbill () {
-      this.$router.push('/showbillpage')
-    },
+    // showbill () {
+    //   this.$router.push('/showbillpage')
+    // },
     handleClickReturnPrevPage () {
       this.$emit('touchable', true)
     },
@@ -500,6 +493,9 @@ export default {
         if (res.data.code === 0) {
           // 记分牌累计分数
           this.addScore(this.myscore)
+          if (res.data.data.isWinStr === '是') {
+            this.popup = 1
+          }
         } else {
           Dialog.alert({
             message: res.data.msg

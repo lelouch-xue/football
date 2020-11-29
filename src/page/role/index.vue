@@ -86,7 +86,7 @@ export default {
     },
     toGuide () {
       console.log('role')
-      this.$emit('swipeto', 1)
+      this.$emit('touchable')
     },
     // 关闭活动规则页面
     closepopup () {
@@ -141,6 +141,8 @@ export default {
                 }
               })
             }
+            this.mobile = ''
+            this.username = ''
           } else {
             Dialog.alert({
               message: res.data.msg

@@ -16,9 +16,9 @@
       :show-indicators="false"
       @change="handleChangeSwiper"
     >
-      <van-swipe-item><c-guide></c-guide></van-swipe-item>
-      <van-swipe-item><c-role @swipeto="swipeTo(0)"></c-role></van-swipe-item>
-      <van-swipe-item><c-play @touchable="onTouchableChange"></c-play></van-swipe-item>
+      <van-swipe-item><c-guide @disableSwip="(v) => touchable = v"></c-guide></van-swipe-item>
+      <van-swipe-item><c-role @touchable="onTouchableChange(0)"></c-role></van-swipe-item>
+<!--      <van-swipe-item><c-showbill></c-showbill></van-swipe-item>-->
     </van-swipe>
   </div>
 </template>
@@ -26,13 +26,11 @@
 <script>
 import guide from '@/page/guide/index.vue'
 import role from '@/page/role/index.vue'
-import play from '@/page/play/index.vue'
 export default {
   name: 'App',
   components: {
     'c-guide': guide,
-    'c-role': role,
-    'c-play': play
+    'c-role': role
   },
   data () {
     return {
@@ -65,7 +63,13 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+  .return{
+    display: none;
+  }
+  .roles{
+    display: none;
+  }
 .my-swipe {
   height: 100vh;
 }

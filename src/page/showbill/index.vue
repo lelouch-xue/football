@@ -11,6 +11,7 @@ export default {
 
 <style lang="scss" scoped>
 .showbill-page {
+  position: absolute;
   background: gray;
   width: 100vw;
   height: 100vh;
