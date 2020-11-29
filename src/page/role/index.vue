@@ -49,8 +49,11 @@ export default {
       popup1: 0,
       mxid: 2,
       clid: 1,
+      roleId: -1,
+      userId: -1,
       username: '',
-      mobile: ''
+      mobile: '',
+      todayPyayCount: 0
     }
   },
   created () {
@@ -73,6 +76,7 @@ export default {
     },
     // 选择角色
     setrole (roleid) {
+      this.roleId = roleid
       if (roleid === this.mxid) {
         this.isMx = true
       } else if (parseInt(roleid) === parseInt(this.clid)) {
@@ -90,7 +94,14 @@ export default {
     },
     toplay () {
       this.popup1 = 0
-      this.$router.push('/playpage')
+      this.$router.push({
+        name: 'playpage',
+        params: {
+          roleId: -1,
+          userId: -1,
+          todayPyayCount: 11
+        }
+      })
     },
     // 提交用户信息
     submit () {
@@ -113,13 +124,22 @@ export default {
         }).then(res => {
           console.log('adf', res.data)
           if (res.data.code === 0) {
-            if (res.data.data.isPyayFootball !== 0) {
+            this.todayPyayCount = res.data.data.isTodayPyayCount
+            if (this.todayPyayCount >= 10) {
               // 今日已提交，明天再来
               this.popup = 0
               this.popup1 = 1
-            } else {
+            } else if (this.todayPyayCount >= 0 && this.todayPyayCount < 10) {
+              this.userId = res.data.data.tbUser.id
               this.popup = 0
-              this.$router.push('/playpage')
+              this.$router.push({
+                name: 'playpage',
+                params: {
+                  roleId: this.roleId,
+                  userId: this.userId,
+                  todayPyayCount: this.todayPyayCount
+                }
+              })
             }
           } else {
             Dialog.alert({

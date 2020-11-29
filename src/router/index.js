@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Play from '../page/play/new'
+import Showbill from '../page/showbill/index'
 // import store from '@/store';
 // in development-env not use lazy-loading,
 // because lazy-loading too many pages will cause webpack hot update too slow.
@@ -38,8 +39,20 @@ const router = new Router({
   // require service support
   mode: 'history',
   routes: [
-    { path: '/playpage', component: Play }
+    {
+      path: '/playpage/:roleId/:userId/:todayPyayCount',
+      name: 'playpage',
+      component: Play
+    },
+    {
+      path: '/showbillpage',
+      name: 'showbillpage',
+      component: Showbill
+    }
   ]
 })
-
+const VueRouterPush = Router.prototype.push
+Router.prototype.push = function push (to) {
+  return VueRouterPush.call(this, to).catch(err => err)
+}
 export default router

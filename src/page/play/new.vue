@@ -2,7 +2,7 @@
   <div class="play-page">
     <div class="next" @click="showbill"></div>
     <div class="lawn">
-      <div class="goal"></div>
+<!--      <div class="goal"></div>-->
       <div class="scoreboard">
         <div :class="'bodyStyle '+(isPlay?'play':'')">
           <div class="container">
@@ -35,13 +35,10 @@
           </div>
         </div>
       </div>
-      <!-- <div class="bigf">
-        <div class="fshade"></div>
-        <img src="../../assets/imgs/big-f.png" @click="seewin">
-      </div> -->
       <div class="smallf">
         <div v-for="num in smallnum">
-          <img :id="num" src="../../assets/imgs/small-f.png">
+          <div :id="num" class="smallfb"></div>
+<!--          <img src="../../assets/imgs/small-f.png">-->
         </div>
       </div>
     </div>
@@ -61,9 +58,8 @@
         <div
           ref="goal"
           class="goal-area"
-          alt=""
         ></div>
-
+        <div class="soccer-shader"></div>
         <div ref="soccer" class="soccer">
           <div
             :class="
@@ -82,10 +78,16 @@
         </div>
       </div>
     </section>
+    <div class="bg4" v-if="playover">
+      <div class="overbg"></div>
+      <div class="playover"></div>
+    </div>
+    <router-view></router-view>
   </div>
 </template>
 <script>
 import bezier from '@/utils/bezier'
+import axios from 'axios'
 import {
   analysis,
   generate,
@@ -94,6 +96,7 @@ import {
   randomNum,
   toInt
 } from '@/utils/index'
+import { Dialog } from 'vant'
 const actualwidth = document.body.clientWidth
 const actualheight = document.body.clientHeight
 
@@ -103,8 +106,12 @@ export default {
     return {
       activeNum: [0, 0],
       isPlay: false,
+      // 每次玩10局
       smallnum: 10,
+      playover: false,
       popup: 0,
+      roleId: -1,
+      userId: -1,
 
       timer: null,
       angel: '0',
@@ -143,8 +150,9 @@ export default {
     submit () {
       console.log('s')
     },
+    // 打开海报
     showbill () {
-      console.log('s')
+      this.$router.push('/showbillpage')
     },
     handleClickReturnPrevPage () {
       this.$emit('touchable', true)
@@ -443,7 +451,17 @@ export default {
     // 滑动动画开始
     // 此时已有得分，位置，等信息
     triggerStart (data) {},
-
+    // 加分
+    addScore (num) {
+      const s = parseInt(num / 10 % 10)
+      console.log('s', s)
+      const g = num % 10
+      console.log('g', g)
+      this.activeNum = [s, g]
+      this.isPlay = false
+      this.isPlay = true
+      this.smallnum--
+    },
     // 足球动画结束,
     // 滑动动画开始
     // 得分，位置，等信息同上
@@ -452,19 +470,57 @@ export default {
       this.isRotate = false
       this.myscore += data.score
       this.index++
+      if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 11) {
+        // 将踢球分数传给接口
+        this.postScore()
+      } else {
+        this.addScore(this.myscore)
+      }
       setTimeout(() => {
         this.handleReset()
+        if (this.smallnum === 0) {
+          // 游戏结束
+          this.playover = true
+        }
       }, 1000)
+    },
+    // 将踢球分数传给后台
+    postScore () {
+      axios({
+        url: '/api/score/add',
+        // url: '/api/dqdz/Usersubmit',
+        method: 'post',
+        data: {
+          roleId: this.roleId,
+          userId: this.userId,
+          socre: this.myscore
+        }
+      }).then(res => {
+        console.log('adf', res.data)
+        if (res.data.code === 0) {
+          // 记分牌累计分数
+          this.addScore(this.myscore)
+        } else {
+          Dialog.alert({
+            message: res.data.msg
+          }).then(() => {
+            // on close
+          })
+        }
+      })
     }
   },
   created () {
-    const id = 1
-    const aa = id * 3 + 2
-    setTimeout(() => {
-      this.activeNum = [parseInt(aa), parseInt(aa)]
-      this.isPlay = false
-      this.isPlay = true
-    }, 500)
+    // const id = 1
+    // const aa = id * 3 + 2
+    // setTimeout(() => {
+    //   this.activeNum = [parseInt(aa), parseInt(aa)]
+    //   this.isPlay = false
+    //   this.isPlay = true
+    // }, 500)
+    this.roleId = this.$route.params.roleId
+    this.userId = this.$route.params.userId
+    this.todayPyayCount = this.$route.params.todayPyayCount
   },
   mounted () {
     // 此处是为了适配点做准备
@@ -534,7 +590,7 @@ export default {
   background: gray;
   width: 100vw;
   height: 100vh;
-  background-image: url("../../assets/imgs/bg3.png");
+  background-image: url("../../assets/imgs/bg3.jpg");
   background-size: 100% 100%;
   position: relative;
   .next{
@@ -545,12 +601,13 @@ export default {
     position: absolute;
     top:20px;
     right:20px;
+    z-index: 1003;
   }
   .lawn {
     background: gray;
     width: 100vw;
     height: 43vh;
-    background-image: url("../../assets/imgs/bg3-1.png");
+    background-image: url("../../assets/imgs/bg3-1.jpg");
     background-size: 100% 100%;
     position: absolute;
     bottom: 0;
@@ -613,9 +670,13 @@ export default {
         width: 10%;
         float: left;
         text-align: center;
-        img{
+        .smallfb{
+          background-image: url("../../assets/imgs/small-f.png");
+          background-size: 100% 100%;
           width: 60%;
+          height: 16px;
           margin-top:15%;
+          margin-left: 20%;
         }
       }
     }
@@ -662,6 +723,30 @@ export default {
     z-index: 999;
     background-color: #111111;
   }
+  .bg4{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    .playover{
+      background-image: url("../../assets/imgs/playover.png");
+      width: 100vw;
+      height: 40vh;
+      background-size: 100% 100%;
+      position: absolute;
+      top:20%;
+      z-index: 1002;
+    }
+    .overbg {
+      background-image: url("../../assets/imgs/bg4.png");
+      width: 100vw;
+      height: 100vh;
+      background-size: 100% 100%;
+      opacity: 0.6;
+      position: absolute;
+      z-index: 1001;
+      animation: lamlight 2s linear infinite;
+    }
+  }
 }
 /* Reset */
 * {
@@ -696,7 +781,7 @@ ul.flip {
   position: relative;
   float: left;
   margin: 23px 0px 0px;
-  width: 40px;
+  width: 50%;
   height: 60px;
   font-size: 40px;
   font-weight: bold;
@@ -928,4 +1013,15 @@ div.play ul li.before .up {
       transform: rotateZ(-360deg);
     }
   }
+@keyframes lamlight {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
 </style>
