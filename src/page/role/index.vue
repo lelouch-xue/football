@@ -1,6 +1,7 @@
 <template>
   <div class="role-page">
     <div class="return" @click="toGuide"></div>
+    <router-link class="next" :to="{name:'playpage'}"></router-link>
     <div class="roles">
       <div class="fbimg"></div>
       <div class="mx-abtn" v-if="isMx" @click="setrole(mxid)"></div>
@@ -165,6 +166,16 @@ export default {
   background-image: url("../../assets/imgs/bg2.jpg");
   background-size: 100% 100%;
   position: relative;
+  .next{
+    width: 75px;
+    height: 35px;
+    background-image: url("../../assets/imgs/next.png");
+    background-size: 100% 100%;
+    position: absolute;
+    top:20px;
+    right:20px;
+    z-index: 1003;
+  }
   .return{
     width: 75px;
     height: 35px;

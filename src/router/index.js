@@ -37,7 +37,7 @@ Vue.use(Router)
 
 const router = new Router({
   // require service support
-  mode: 'history',
+  mode: 'hash',
   routes: [
     {
       path: '/playpage/:roleId/:userId/:todayPyayCount',
