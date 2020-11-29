@@ -59,7 +59,8 @@
         <div
           ref="goal"
           class="goal-area"
-        ></div>
+        >
+        </div>
         <div class="soccer-shader"></div>
         <div ref="soccer" class="soccer">
           <div
@@ -74,8 +75,11 @@
           ></div>
         </div>
         <div ref='shader' class="soccer-shader"></div>
+        <template v-if="isEnd">
+          <div v-if="isHit" class="goal-hit hit-ani" :class="{'hit-ani': isEnd}"></div>
+          <div v-else class="miss-hit hit-ani" :class="{'hit-ani': isEnd}"></div>
+        </template>
         <div ref="virturl" class="soccer-virturl" v-hammer:swipe="handleSwipe">
-
         </div>
       </div>
     </section>
@@ -135,7 +139,9 @@ export default {
       goalbottom: 0,
       myscore: 0,
       index: 0,
-      isRotate: false
+      isRotate: false,
+      isHit: false,
+      isEnd: false
     }
   },
   methods: {
@@ -149,6 +155,14 @@ export default {
     // },
     handleClickReturnPrevPage () {
       this.$emit('touchable', true)
+    },
+    showHitEffect (state) {
+      this.isEnd = true
+      this.isHit = state
+      setTimeout(() => {
+        this.isHit = false
+        this.isEnd = false
+      }, 1000)
     },
     handleSwipe (evt) {
       console.log(evt)
@@ -264,6 +278,7 @@ export default {
           } else {
             this.triggerEnd(data)
           }
+          this.showHitEffect(hit === 0)
           return
         }
         if (!soccer.classList.contains('soccer-ani')) {
@@ -463,12 +478,12 @@ export default {
       this.isRotate = false
       this.myscore += data.score
       this.index++
-      if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 11) {
-        // 将踢球分数传给接口
-        this.postScore()
-      } else {
-        this.addScore(this.myscore)
-      }
+      // if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 11) {
+      //   // 将踢球分数传给接口
+      //   this.postScore()
+      // } else {
+      //   this.addScore(this.myscore)
+      // }
       setTimeout(() => {
         this.handleReset()
         if (this.smallnum === 0) {
@@ -988,7 +1003,32 @@ div.play ul li.before .up {
       left: 50%;
       transform: translateX(-50%);
       transform-origin: center;
-      z-index: 1;
+      z-index: 10;
+    }
+
+    .goal-hit {
+      background-image: url("../../assets/imgs/play/goal_hit.png");
+      background-size: 100% 100%;
+      transform-origin: center;
+      width: 100vw;
+      height: 20vw;
+      position: absolute;
+      bottom: 42vh;
+      z-index: 10;
+    }
+
+    .miss-hit {
+      background-image: url("../../assets/imgs/play/miss_hit.png");
+      background-size: 100% 100%;
+      transform-origin: center;
+      width: 100vw;
+      height: 20vw;
+      position: absolute;
+      bottom: 42vh;
+      z-index: 10;
+    }
+    .hit-ani {
+      animation: bounceIn 0.3s linear 1 alternate forwards;
     }
   }
 
@@ -1018,6 +1058,40 @@ div.play ul li.before .up {
   }
   100% {
     opacity: 0.3;
+  }
+}
+
+@keyframes bounceIn{
+  from, 20%, 40%, 60%, 80%, to {
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  }
+  0% {
+    opacity: 0;
+    -webkit-transform: scale3d(.3, .3, .3);
+    transform: scale3d(.3, .3, .3);
+  }
+  20% {
+    -webkit-transform: scale3d(1.1, 1.1, 1.1);
+    transform: scale3d(1.1, 1.1, 1.1);
+  }
+  40% {
+    -webkit-transform: scale3d(.9, .9, .9);
+    transform: scale3d(.9, .9, .9);
+  }
+  60% {
+    opacity: 1;
+    -webkit-transform: scale3d(1.03, 1.03, 1.03);
+    transform: scale3d(1.03, 1.03, 1.03);
+  }
+  80% {
+    -webkit-transform: scale3d(.97, .97, .97);
+    transform: scale3d(.97, .97, .97);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
   }
 }
 </style>
