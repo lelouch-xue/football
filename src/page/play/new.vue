@@ -88,6 +88,18 @@
       <div class="overbg"></div>
       <div class="playover"></div>
     </div>
+    <!--重玩还是助力-->
+    <div v-show="popup1">
+      <!--这里是要展示的内容层-->
+      <div class="zlbg">
+        <div class="closerule" @click="closepopup"></div>
+        <div class="info">您为{{roleName}}助力{{myscore}}分！</div>
+        <div class="reset" @click="reset"></div>
+        <div class="zlbtn" @click="postScore"></div>
+      </div>
+      <!--这里是半透明背景层-->
+      <div class="over"></div>
+    </div>
 <!--    <router-view></router-view>-->
   </div>
 </template>
@@ -116,8 +128,10 @@ export default {
       smallnum: 10,
       playover: false,
       popup: 0,
+      popup1: 0,
       roleId: -1,
       userId: -1,
+      roleName: '梅西',
 
       timer: null,
       angel: '0',
@@ -148,7 +162,9 @@ export default {
   methods: {
     // 关闭活动规则页面
     closepopup () {
+      this.playover = false
       this.popup = 0
+      this.myscore = 0
     },
     // 打开海报
     // showbill () {
@@ -313,8 +329,8 @@ export default {
       this.diameter * 0.5 - this.initialPosY
       }px) scale(1)`
 
-    soccer.style.left = `0px`
-    soccer.style.bottom = `0px`
+      soccer.style.left = `0px`
+      soccer.style.bottom = `0px`
 
       const shader = this.$refs.shader
       shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 10}px`
@@ -464,19 +480,32 @@ export default {
       this.isRotate = false
       this.myscore += data.score
       this.index++
-      if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 11) {
-        // 将踢球分数传给接口
-        this.postScore()
-      } else {
-        this.addScore(this.myscore)
-      }
+      this.addScore(this.myscore)
+      // if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 11) {
+      //   // 将踢球分数传给接口
+      //   this.postScore()
+      // } else {
+      //   this.addScore(this.myscore)
+      // }
       setTimeout(() => {
         this.handleReset()
         if (this.smallnum === 0) {
           // 游戏结束
           this.playover = true
+          if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 11) {
+            this.popup1 = 1
+            // 将踢球分数传给接口
+            // this.postScore()
+          }
         }
       }, 1000)
+    },
+    reset () {
+      this.playover = false
+      this.popup1 = 0
+      this.myscore = 0
+      this.smallnum = 11
+      this.addScore(0)
     },
     // 将踢球分数传给后台
     postScore () {
@@ -490,10 +519,11 @@ export default {
           socre: this.myscore
         }
       }).then(res => {
+        this.popup1 = 0
         console.log('adf', res.data)
         if (res.data.code === 0) {
           // 记分牌累计分数
-          this.addScore(this.myscore)
+          // this.addScore(this.myscore)
           if (res.data.data.isWinStr === '是') {
             this.popup = 1
           }
@@ -518,6 +548,11 @@ export default {
     this.roleId = this.$route.params.roleId
     this.userId = this.$route.params.userId
     this.todayPyayCount = this.$route.params.todayPyayCount
+    if (this.roleId === 2) {
+      this.roleName = '梅西'
+    } else if (this.roleId === 1) {
+      this.roleName = 'C罗'
+    }
   },
   mounted () {
     // 此处是为了适配点做准备
@@ -680,6 +715,46 @@ export default {
       }
     }
   }
+  .zlbg{
+    position: absolute;
+    height: 140px;
+    width: 280px;
+    border-radius: 0.25rem;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background-image: url("../../assets/imgs/zlbg.png");
+    background-size: 100%;
+    z-index: 1010;
+    .info{
+      color:#3f3d3a;
+      font-size: 20px;
+      text-align: center;
+      margin-top:30px;
+      font-weight: 500;
+    }
+    .reset{
+      width: 85px;
+      height: 35px;
+      background-image: url("../../assets/imgs/reset.png");
+      background-size: 100% 100%;
+      position: absolute;
+      left: 30%;
+      top: 60%;
+      margin-left: -45px;
+    }
+    .zlbtn{
+      width: 85px;
+      height: 35px;
+      background-image: url("../../assets/imgs/zlbtn.png");
+      background-size: 100% 100%;
+      position: absolute;
+      left: 70%;
+      top: 60%;
+      margin-left: -45px;
+    }
+  }
   .win {
     position: absolute;
     height: 300px;
@@ -688,7 +763,7 @@ export default {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1000;
+    z-index: 1020;
     background-image: url("../../assets/imgs/win.png");
     background-size: 100%;
     .closerule{

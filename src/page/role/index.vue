@@ -17,6 +17,7 @@
         <div><input v-model="username" class="username" placeholder="姓 名" /></div>
         <div><input v-model="mobile" class="mobile" placeholder="电 话" type="number" /></div>
         <div class="submit" @click="submit"></div>
+        <div class="jump" @click="toplay"></div>
       </div>
       <!--这里是半透明背景层-->
       <div class="over"></div>
@@ -28,6 +29,18 @@
         <div class="closerule" @click="closepopup"></div>
 <!--        <router-link class="submit" to='/playpage'></router-link>-->
         <div class="submit" @click="toplay"></div>
+      </div>
+      <!--这里是半透明背景层-->
+      <div class="over"></div>
+    </div>
+    <div class="showjf" @click="showjf"></div>
+    <!--积分榜-->
+    <div v-show="popup3">
+      <!--这里是要展示的内容层-->
+      <div class="zlbg">
+        <div class="closerule" @click="closepopup"></div>
+        <div class="clscore">{{clscore}}分</div>
+        <div class="mxscore">{{mxscore}}分</div>
       </div>
       <!--这里是半透明背景层-->
       <div class="over"></div>
@@ -54,11 +67,23 @@ export default {
       userId: -1,
       username: '',
       mobile: '',
-      todayPyayCount: 0
+      todayPyayCount: 0,
+      popup3: 0,
+      clscore: 0,
+      mxscore: 0
     }
   },
   created () {
     this.init()
+    // axios('/api/role/score', {
+    //   // axios('/api/dqdz/Rolelist', {
+    //   params: {}
+    // }).then(res => {
+    //   if (res.data.code === '0') {
+    //     this.clscore = res.data.data[0].allscore
+    //     this.mxscore = res.data.data[1].allscore
+    //   }
+    // })
   },
   methods: {
     init () {
@@ -91,9 +116,12 @@ export default {
     },
     // 关闭活动规则页面
     closepopup () {
+      this.popup1 = 0
+      this.popup3 = 0
       this.popup = 0
     },
     toplay () {
+      this.popup = 0
       this.popup1 = 0
       this.$router.push({
         name: 'playpage',
@@ -153,6 +181,9 @@ export default {
           }
         })
       }
+    },
+    showjf () {
+      this.popup3 = 1
     }
   }
 }
@@ -174,7 +205,6 @@ export default {
     position: absolute;
     top:20px;
     right:20px;
-    z-index: 1003;
   }
   .return{
     width: 75px;
@@ -291,7 +321,7 @@ export default {
       position: absolute;
       left: 50%;
       top: 35%;
-      margin-left: -105px;
+      margin-left: -115px;
       padding-left: 20px;
     }
     .mobile{
@@ -303,18 +333,82 @@ export default {
       position: absolute;
       left: 50%;
       top: 52%;
-      margin-left: -105px;
+      margin-left: -115px;
       padding-left: 20px;
     }
     .submit{
       width: 85px;
-      height: 30px;
+      height: 33px;
       background-image: url("../../assets/imgs/submit.png");
       background-size: 100% 100%;
       position: absolute;
-      left: 50%;
+      left: 30%;
       top: 73%;
       margin-left: -45px;
+    }
+    .jump{
+      width: 85px;
+      height: 33px;
+      background-image: url("../../assets/imgs/jump.png");
+      background-size: 100% 100%;
+      position: absolute;
+      right: 15%;
+      top: 73%;
+      margin-left: -45px;
+    }
+  }
+  .showjf{
+    width: 130px;
+    height: 50px;
+    background-image: url("../../assets/imgs/jfbtn.png");
+    background-size: 100% 100%;
+    position: absolute;
+    top:21%;
+    left: 50%;
+    margin-left: -55px;
+  }
+  .zlbg{
+    position: absolute;
+    height: 216px;
+    width: 280px;
+    border-radius: 0.25rem;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background-image: url("../../assets/imgs/jfbg.png");
+    background-size: 100%;
+    z-index: 1010;
+    .closerule{
+      position: absolute;
+      left: 10px;
+      top:10px;
+      width: 20px;
+      height: 20px;
+      background-image: url("../../assets/imgs/closerule.png");
+      background-size: 100%;
+    }
+    .clscore{
+      width: 50%;
+      height: 50px;
+      text-align: center;
+      position: absolute;
+      left:0;
+      bottom: 5%;
+      color: #3f3d3a;
+      font-size: 20px;
+      font-weight: 500;
+    }
+    .mxscore{
+      width: 50%;
+      height: 50px;
+      text-align: center;
+      position: absolute;
+      left:50%;
+      bottom: 5%;
+      color: #3f3d3a;
+      font-size: 20px;
+      font-weight: 500;
     }
   }
   .over {
