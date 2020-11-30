@@ -60,8 +60,15 @@
           ref="goal"
           class="goal-area"
         >
+          <div
+            class="goal-area-score"
+            :style="`opacity: ${isShowScore ? '0.7' : '0'}`"
+          >
+          </div>
         </div>
         <div class="soccer-shader"></div>
+        <div ref="glove" class="glove-area">
+        </div>
         <div ref="soccer" class="soccer">
           <div
             ref="ball"
@@ -75,6 +82,7 @@
             class="soccer-img"
           ></div>
         </div>
+
         <div ref='shader' class="soccer-shader"></div>
         <template v-if="isEnd">
           <div v-if="isHit" class="goal-hit hit-ani" :class="{'hit-ani': isEnd}"></div>
@@ -89,6 +97,11 @@
       <div class="playover"></div>
     </div>
 <!--    <router-view></router-view>-->
+    <div class="sounds-area">
+      <audio ref="success" src="../../assets/sounds/goal.mp3"></audio>
+      <audio ref="fail" src="../../assets/sounds/miss.mp3"></audio>
+      <audio ref="hit" src="../../assets/sounds/hit.wav"></audio>
+    </div>
   </div>
 </template>
 <script>
@@ -142,7 +155,8 @@ export default {
       index: 0,
       isRotate: false,
       isHit: false,
-      isEnd: false
+      isEnd: false,
+      isShowScore: true
     }
   },
   methods: {
@@ -248,7 +262,7 @@ export default {
       // console.log(initPox, c1, c2, target)
       if (this.$refs.soccer) {
         this.animation(
-          bezier.getBezierPoints(15, initPox, c1, c2, target),
+          bezier.getBezierPoints(10, initPox, c1, c2, target),
           res
         )
       }
@@ -261,28 +275,38 @@ export default {
       let size = 1
       const time = 25
       const soccer = this.$refs.soccer
-      const ball = this.$refs.ball;
 
       // 踢球开始
       this.triggerStart(data)
+      this.playSound(3)
       this.timer = setInterval(() => {
         if (index > len - 1) {
           clearInterval(this.timer)
           // soccer.classList.remove('soccer-ani')
 
-          const { hit } = data
+          const { hit, posititon } = data
           const point = points[points.length - 1]
-
+          // const hit = 1
           if (hit === 1) {
             // 弧形动画结束，模拟扑出动画
-            this.putoutAni(point, data, size)
+            this.showGlove(point, posititon)
+            this.triggerEnd(data)
+            this.playSound(2)
           } else if (hit === 2) {
             // 弧形动画结束，模拟门框弹出动画
             this.frameAni(point, data, size)
+            this.playSound(2)
           } else {
             this.triggerEnd(data)
+            if (hit === -1) {
+              this.playSound(2)
+            } else {
+              this.playSound(1)
+              this.putoutAni(point, data, size)
+            }
           }
           this.showHitEffect(hit === 0)
+
           return
         }
         // if (!soccer.classList.contains('soccer-ani')) {
@@ -295,7 +319,7 @@ export default {
 
         index++
 
-        if (size >= 0.26) size -= 0.05
+        if (size >= 0.26) size -= 0.08
       }, time)
 
       // 阴影控制
@@ -313,8 +337,8 @@ export default {
       this.diameter * 0.5 - this.initialPosY
       }px) scale(1)`
 
-    soccer.style.left = `0px`
-    soccer.style.bottom = `0px`
+      soccer.style.left = '0px'
+      soccer.style.bottom = '0px'
 
       const shader = this.$refs.shader
       shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 10}px`
@@ -330,31 +354,21 @@ export default {
 
       let _bottomPos = []
 
-      let _low = false
-      if (point[1] - this.goalbottom < 50) _low = false
-      else _low = true
+      // let _low = false
+      // if (point[1] - this.goalbottom < 50) _low = false
+      // else _low = true
 
-      if (_low) {
-        _bottomPos = toInt([
-          randomNum(
-            point[0] + this.goalwidth * -0.2,
-            point[0] + this.goalwidth * 0.2
-          ),
-          this.goalbottom - randomNum(5, 10)
-        ])
-      } else {
-        _bottomPos = toInt([
-          randomNum(
-            point[0] + this.goalwidth * -0.1,
-            point[0] + this.goalwidth * -0.1
-          ),
-          this.goalbottom - randomNum(5, 10)
-        ])
-      }
+      _bottomPos = toInt([
+        randomNum(
+          point[0] + this.goalwidth * -0.05,
+          point[0] + this.goalwidth * 0.05
+        ),
+        this.goalbottom + 5
+      ])
       console.log(point, this.goalbottom, _bottomPos)
       const _cpos = toInt([
         (_bottomPos[0] + point[0]) * 0.5,
-        point[1] + randomNum(-7, 10)
+        point[1] + randomNum(-5, 5)
       ])
       const _step =
         Math.round(((point[1] - _bottomPos[1]) / this.goalheight) * 6) + 3
@@ -399,8 +413,8 @@ export default {
       } else if (posititon === 3) {
         _bottomPos = toInt([
           randomNum(
-            actualwidth * 0.5 - this.goalwidth * 0.7,
-            actualwidth * 0.5 + this.goalwidth * 0.7
+            actualwidth * 0.5 - this.goalwidth * 0.2,
+            actualwidth * 0.5 + this.goalwidth * 0.2
           ),
           this.goalbottom + this.goalheight + randomNum(30, 70)
         ])
@@ -440,6 +454,20 @@ export default {
         }px) scale(${size})`
         index++
       }, time)
+    },
+
+    showGlove (position, area) {
+      const glove = this.$refs.glove
+      glove.style.display = 'block'
+      glove.style.width = `${this.diameter}px`
+      glove.style.height = `${this.diameter}px`
+      let rotate = 0
+      if (area === 1 || area === 2) { rotate = -45 } else if (area === 3 || area === 4) { rotate = 0 } else if (area === 5 || area === 6) { rotate = 45 }
+      glove.style.transform = `translate(${this.diameter * -0.5 + position[0]}px, ${
+          this.diameter * 0.5 - position[1]}px) scale(0.35) rotate(${rotate}deg)`
+      setTimeout(() => {
+        glove.style.display = 'none'
+      }, 1200)
     },
     // 滑动成绩触发,
     // 滑动动画开始
@@ -505,6 +533,23 @@ export default {
           })
         }
       })
+    },
+    playSound (state) {
+      const success = this.$refs.success
+      const fail = this.$refs.fail
+      const hit = this.$refs.hit
+
+      switch (state) {
+        case 1:
+          success.play()
+          break
+        case 2:
+          fail.play()
+          break
+        case 3:
+          hit.play()
+          break
+      }
     }
   },
   created () {
@@ -534,8 +579,8 @@ export default {
     }px)`
     // soccer.style.left = `${this.initialPosX}px`
     // soccer.style.bottom = `${this.initialPosY}px`
-    soccer.style.left = `0px`
-    soccer.style.bottom = `0px`
+    soccer.style.left = '0px'
+    soccer.style.bottom = '0px'
 
     const virturl = this.$refs.virturl
     virturl.style.width = `${this.diameter}px`
@@ -579,6 +624,10 @@ export default {
 
     goal.style.transform = `translateX(${this.goalwidth * -0.5}px)`
     goal.style.left = `${actualwidth * 0.5}px`
+
+    setTimeout(() => {
+      this.isShowScore = false
+    }, 2500)
   }
 }
 </script>
@@ -942,6 +991,32 @@ div.play ul li.before .up {
       position: absolute;
       background-image: url('../../assets/imgs/play/goal.png');
       background-size: 100% 100%;
+
+      .goal-area-score {
+        background-image: url('../../assets/imgs/play/score.png');
+        background-size: 100% 100%;
+        // width: 100%;
+        // height: 100%;
+        // margin: 10px 10px 0;
+        opacity: 0.7;
+        transition: opacity 800ms linear;
+        position: absolute;
+        left: 7px;
+        right: 7px;
+        top: 6px;
+        bottom: 0;
+      }
+    }
+    .glove-area {
+      background-image: url("../../assets/imgs/play/glove.png");
+      background-size: 100% 100%;
+      transform-origin: center;
+      // width: 10vw;
+      // height: 10vw;
+      position: absolute;
+      display: none;
+      bottom: 0;
+      left: 0;
     }
 
     .soccer {
@@ -1022,6 +1097,9 @@ div.play ul li.before .up {
     }
     .hit-ani {
       animation: bounceIn 0.3s linear 1 alternate forwards;
+    }
+    .sounds-area {
+      display: none;
     }
   }
 
