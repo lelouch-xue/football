@@ -64,6 +64,7 @@
         <div class="soccer-shader"></div>
         <div ref="soccer" class="soccer">
           <div
+            ref="ball"
             :class="
               isRotate
                 ? Math.random() > 0.5
@@ -260,7 +261,12 @@ export default {
       let size = 1
       const time = 25
       const soccer = this.$refs.soccer
+      const ball = this.$refs.ball;
       console.log(points)
+      console.log(ball)
+
+      // 踢球开始
+      this.triggerStart(data)
       this.timer = setInterval(() => {
         if (index > len - 1) {
           clearInterval(this.timer)
@@ -285,13 +291,16 @@ export default {
           // soccer.classList.add('soccer-ani')
         }
 
-        // 踢球开始
-        this.triggerStart(data)
-        soccer.style.left = `${points[index][0]}px`
-        soccer.style.bottom = `${points[index][1]}px`
-        soccer.style.transform = `translate(${this.diameter * -0.5}px, ${
-          this.diameter * 0.5
+        // soccer.style.transform = `translate(${this.diameter * -0.5}px, ${
+        //   this.diameter * 0.5
+        // }px) scale(${size})`
+        soccer.style.transform = `translate(${this.diameter * -0.5 + points[index][0]}px, ${
+          this.diameter * 0.5 - points[index][1]
         }px) scale(${size})`
+
+        console.log(ball.style.transform);
+
+        console.log(`size --- ${size}`);
         index++
 
         if (size >= 0.26) size -= 0.05
@@ -308,11 +317,17 @@ export default {
     handleReset () {
       const soccer = this.$refs.soccer
       soccer.style.display = 'block'
-      soccer.style.left = `${this.initialPosX}px`
-      soccer.style.bottom = `${this.initialPosY}px`
-      soccer.style.transform = `translate(${this.diameter * -0.5}px, ${
-        this.diameter * 0.5
+      soccer.style.transform = `translate(${this.diameter * -0.5 + this.initialPosX}px, ${
+      this.diameter * 0.5 - this.initialPosY
       }px) scale(1)`
+
+    soccer.style.left = `0px`
+    soccer.style.bottom = `0px`
+
+      const ball = this.$refs.ball
+      ball.style.transform = 'scale(1)'
+      // ball.style.height = '100%';
+      // ball.style.width = '100%'
 
       const shader = this.$refs.shader
       shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 10}px`
@@ -375,12 +390,8 @@ export default {
           // soccer.classList.add('soccer-ani')
         }
 
-        // 踢球开始
-        this.triggerStart(data)
-        soccer.style.left = `${_points[index][0]}px`
-        soccer.style.bottom = `${_points[index][1]}px`
-        soccer.style.transform = `translate(${this.diameter * -0.5}px, ${
-          this.diameter * 0.5
+        soccer.style.transform = `translate(${this.diameter * -0.5 + _points[index][0]}px, ${
+          this.diameter * 0.5 - _points[index][1]
         }px) scale(${size})`
         index++
       }, time)
@@ -445,12 +456,8 @@ export default {
           // soccer.classList.add('soccer-ani')
         }
 
-        // 踢球开始
-        this.triggerStart(data)
-        soccer.style.left = `${_points[index][0]}px`
-        soccer.style.bottom = `${_points[index][1]}px`
-        soccer.style.transform = `translate(${this.diameter * -0.5}px, ${
-          this.diameter * 0.5
+        soccer.style.transform = `translate(${this.diameter * -0.5 + _points[index][0]}px, ${
+          this.diameter * 0.5 - _points[index][1]
         }px) scale(${size})`
         index++
       }, time)
@@ -543,11 +550,13 @@ export default {
     const goal = this.$refs.goal
     soccer.style.width = `${this.diameter}px`
     soccer.style.height = `${this.diameter}px`
-    soccer.style.transform = `translate(${this.diameter * -0.5}px, ${
-      this.diameter * 0.5
+    soccer.style.transform = `translate(${this.diameter * -0.5 + this.initialPosX}px, ${
+      this.diameter * 0.5 - this.initialPosY
     }px)`
-    soccer.style.left = `${this.initialPosX}px`
-    soccer.style.bottom = `${this.initialPosY}px`
+    // soccer.style.left = `${this.initialPosX}px`
+    // soccer.style.bottom = `${this.initialPosY}px`
+    soccer.style.left = `0px`
+    soccer.style.bottom = `0px`
 
     const virturl = this.$refs.virturl
     virturl.style.width = `${this.diameter}px`
@@ -973,14 +982,19 @@ div.play ul li.before .up {
         transform-origin: center;
         width: 100%;
         height: 100%;
+        // position: absolute;
+        // left: 50%;
+        // top: 50%;
+        // transform: translate(-50%, -50%);
+        transition: all 50ms;
       }
     }
     .soccer-ani-R {
-      animation: soccerRotateR 5s linear infinite;
+      // animation: soccerRotateR 5s linear infinite;
     }
 
     .soccer-ani-L {
-      animation: soccerRotateL 5s linear infinite;
+      // animation: soccerRotateL 5s linear infinite;
     }
     .soccer-shader {
       width: 2.13333rem;
