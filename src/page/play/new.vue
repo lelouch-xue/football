@@ -478,12 +478,12 @@ export default {
       this.isRotate = false
       this.myscore += data.score
       this.index++
-      // if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 11) {
-      //   // 将踢球分数传给接口
-      //   this.postScore()
-      // } else {
-      //   this.addScore(this.myscore)
-      // }
+      if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 11) {
+        // 将踢球分数传给接口
+        this.postScore()
+      } else {
+        this.addScore(this.myscore)
+      }
       setTimeout(() => {
         this.handleReset()
         if (this.smallnum === 0) {
