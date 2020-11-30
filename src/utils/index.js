@@ -219,19 +219,19 @@ const positions = {
   lb: {
     hitrate: 70,
     score: 7,
-    putout: 25,
+    putout: 20,
     frame: 15
   },
   mt: {
     hitrate: 90,
     score: 5,
-    putout: 30,
-    frame: 20
+    putout: 15,
+    frame: 15
   },
   mb: {
     hitrate: 90,
     score: 5,
-    putout: 30,
+    putout: 25,
     frame: 0
   },
   rt: {
@@ -243,7 +243,7 @@ const positions = {
   rb: {
     hitrate: 70,
     score: 7,
-    putout: 25,
+    putout: 20,
     frame: 15
   }
 }
@@ -273,32 +273,32 @@ const randomNum = (minNum, maxNum) => {
 
 // 门框范围内 随机点
 const getAreaPointByPos = (actualwidth, goalwidth, goalheight, goalbottom, pos) => {
-  const posLT = [randomNum(actualwidth * 0.5 - goalwidth * 0.275, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33), randomNum(
+  const posLT = [randomNum(actualwidth * 0.5 - goalwidth * 0.4, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.3), randomNum(
     goalbottom + goalheight * 0.5,
     goalbottom + goalheight * 0.775
   )]
 
-  const posLB = [randomNum(actualwidth * 0.5 - goalwidth * 0.275, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33), randomNum(
+  const posLB = [randomNum(actualwidth * 0.5 - goalwidth * 0.4, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.3), randomNum(
     goalbottom,
     goalbottom + goalheight * 0.5
   )]
 
-  const posMT = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66), randomNum(
+  const posMT = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.3, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.7), randomNum(
     goalbottom + goalheight * 0.5,
     goalbottom + goalheight * 0.775
   )]
 
-  const posMB = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.33, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66), randomNum(
+  const posMB = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.3, actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.7), randomNum(
     goalbottom,
     goalbottom + goalheight * 0.5
   )]
 
-  const posRT = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66, actualwidth * 0.5 + goalwidth * 0.275), randomNum(
+  const posRT = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.7, actualwidth * 0.5 + goalwidth * 0.4), randomNum(
     goalbottom + goalheight * 0.5,
     goalbottom + goalheight * 0.775
   )]
 
-  const posRB = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.66, actualwidth * 0.5 + goalwidth * 0.275), randomNum(
+  const posRB = [randomNum(actualwidth * 0.5 - goalwidth * 0.5 + goalwidth * 0.7, actualwidth * 0.5 + goalwidth * 0.4), randomNum(
     goalbottom,
     goalbottom + goalheight * 0.5
   )]
