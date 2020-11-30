@@ -8,7 +8,7 @@ const { js_ver, css_ver, img_ver } = {
 }
 module.exports = {
   // 部署应用包时的基本 URL,用法和 webpack 本身的 output.publicPath 一致
-  publicPath: './',
+  publicPath: '/',
   // 输出文件目录
   outputDir: 'dist',
   // eslint-loader 是否在保存的时候检查
@@ -95,7 +95,7 @@ module.exports = {
     proxy: {
       '/api': {
         target: 'http://47.111.65.173:8080',
-        // target: 'http://47.111.65.173/prod-api/',
+        // target: 'http://localhost:8080',
         // target: 'http://123.56.2.234/c5_201706/activitiesApi.php',
         changeOrigin: true,
         pathRewrite: {

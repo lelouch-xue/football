@@ -111,7 +111,6 @@ export default {
       this.popup = 1
     },
     toGuide () {
-      console.log('role')
       this.$emit('touchable')
     },
     // 关闭活动规则页面
@@ -151,7 +150,6 @@ export default {
             userName: this.username
           }
         }).then(res => {
-          console.log('adf', res.data)
           if (res.data.code === 0) {
             this.todayPyayCount = res.data.data.isTodayPyayCount
             if (this.todayPyayCount >= 10) {

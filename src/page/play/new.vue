@@ -492,9 +492,7 @@ export default {
     // 加分
     addScore (num) {
       const s = parseInt(num / 10 % 10)
-      console.log('s', s)
       const g = num % 10
-      console.log('g', g)
       this.activeNum = [s, g]
       this.isPlay = false
       this.isPlay = true
@@ -504,7 +502,6 @@ export default {
     // 滑动动画开始
     // 得分，位置，等信息同上
     triggerEnd (data) {
-      console.log(data)
       this.isRotate = false
       this.myscore += data.score
       this.index++
@@ -548,7 +545,6 @@ export default {
         }
       }).then(res => {
         this.popup1 = 0
-        console.log('adf', res.data)
         if (res.data.code === 0) {
           // 记分牌累计分数
           // this.addScore(this.myscore)
