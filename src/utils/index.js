@@ -46,19 +46,19 @@ const generate = (data) => {
     if (strength > Tthreshold) {
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: -11
       }
     } else if (strength <= Tthreshold && strength >= Bthreshold) {
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: -11
       }
     } else {
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: 12
       }
     }
@@ -69,7 +69,7 @@ const generate = (data) => {
     if (strength > Tthreshold) {
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: 11
       }
     } else if (strength <= Tthreshold && strength >= Mthreshold) {
@@ -95,7 +95,7 @@ const generate = (data) => {
       // 短了
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: 12
 
       }
@@ -107,7 +107,7 @@ const generate = (data) => {
     if (strength > Tthreshold) {
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: 11
 
       }
@@ -136,7 +136,7 @@ const generate = (data) => {
       // 短了
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: 12
 
       }
@@ -148,7 +148,7 @@ const generate = (data) => {
     if (strength > Tthreshold) {
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: 11
       }
     } else if (strength <= Tthreshold && strength >= Mthreshold) {
@@ -175,7 +175,7 @@ const generate = (data) => {
       // 短了
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: 12
       }
     }
@@ -184,19 +184,19 @@ const generate = (data) => {
     if (strength > Tthreshold) {
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: -21
       }
     } else if (strength <= Tthreshold && strength >= Bthreshold) {
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: -21
       }
     } else {
       record = {
         score: 0,
-        hit: 0,
+        hit: -1,
         posititon: 12
       }
     }
@@ -213,38 +213,38 @@ const positions = {
   lt: {
     hitrate: 50,
     score: 10,
-    putout: 5,
+    putout: 10,
     frame: 10
   },
   lb: {
     hitrate: 70,
     score: 7,
-    putout: 10,
-    frame: 10
+    putout: 25,
+    frame: 15
   },
   mt: {
     hitrate: 90,
     score: 5,
-    putout: 15,
-    frame: 10
+    putout: 30,
+    frame: 20
   },
   mb: {
     hitrate: 90,
     score: 5,
-    putout: 15,
+    putout: 30,
     frame: 0
   },
   rt: {
     hitrate: 50,
     score: 10,
-    putout: 5,
+    putout: 10,
     frame: 10
   },
   rb: {
     hitrate: 70,
     score: 7,
-    putout: 10,
-    frame: 10
+    putout: 25,
+    frame: 15
   }
 }
 
@@ -308,7 +308,7 @@ const getAreaPointByPos = (actualwidth, goalwidth, goalheight, goalbottom, pos) 
 
 // 门框外随机点 包括左侧 中上 中下 右侧
 const getOuterPointByPos = (actualwidth, goalwidth, goalheight, goalbottom, angle, stresh, ballPosX, ballPosY, pos) => {
-  const posLT = [randomNum(actualwidth * -0.05, ballPosX - goalwidth * 0.3), randomNum(
+  const posLT = [randomNum(actualwidth * -0.05, ballPosX - goalwidth * 0.55), randomNum(
     goalbottom,
     goalheight + goalbottom
   )]
@@ -322,7 +322,7 @@ const getOuterPointByPos = (actualwidth, goalwidth, goalheight, goalbottom, angl
 
   const posMB = [Math.round(ballPosX + angle * goalwidth / 100), Math.round(ballPosY + (goalbottom - ballPosY) * stresh / 100)]
 
-  const posRT = [Math.round(randomNum(actualwidth * 1.05, ballPosX + goalwidth * 0.3)), Math.round(randomNum(
+  const posRT = [Math.round(randomNum(actualwidth * 1.05, ballPosX + goalwidth * 0.55)), Math.round(randomNum(
     goalbottom,
     goalheight + goalbottom
   ))]
