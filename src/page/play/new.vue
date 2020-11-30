@@ -262,8 +262,6 @@ export default {
       const time = 25
       const soccer = this.$refs.soccer
       const ball = this.$refs.ball;
-      console.log(points)
-      console.log(ball)
 
       // 踢球开始
       this.triggerStart(data)
@@ -287,20 +285,14 @@ export default {
           this.showHitEffect(hit === 0)
           return
         }
-        if (!soccer.classList.contains('soccer-ani')) {
-          // soccer.classList.add('soccer-ani')
-        }
+        // if (!soccer.classList.contains('soccer-ani')) {
+        //   // soccer.classList.add('soccer-ani')
+        // }
 
-        // soccer.style.transform = `translate(${this.diameter * -0.5}px, ${
-        //   this.diameter * 0.5
-        // }px) scale(${size})`
         soccer.style.transform = `translate(${this.diameter * -0.5 + points[index][0]}px, ${
           this.diameter * 0.5 - points[index][1]
         }px) scale(${size})`
 
-        console.log(ball.style.transform);
-
-        console.log(`size --- ${size}`);
         index++
 
         if (size >= 0.26) size -= 0.05
@@ -323,11 +315,6 @@ export default {
 
     soccer.style.left = `0px`
     soccer.style.bottom = `0px`
-
-      const ball = this.$refs.ball
-      ball.style.transform = 'scale(1)'
-      // ball.style.height = '100%';
-      // ball.style.width = '100%'
 
       const shader = this.$refs.shader
       shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 10}px`
@@ -383,11 +370,7 @@ export default {
         if (index > len - 1) {
           clearInterval(timer)
           this.triggerEnd(data)
-          // soccer.classList.remove('soccer-ani')
           return
-        }
-        if (!soccer.classList.contains('soccer-ani')) {
-          // soccer.classList.add('soccer-ani')
         }
 
         soccer.style.transform = `translate(${this.diameter * -0.5 + _points[index][0]}px, ${
@@ -449,11 +432,7 @@ export default {
           clearInterval(timer)
           soccer.style.display = 'none'
           this.triggerEnd(data)
-          // soccer.classList.remove('soccer-ani')
           return
-        }
-        if (!soccer.classList.contains('soccer-ani')) {
-          // soccer.classList.add('soccer-ani')
         }
 
         soccer.style.transform = `translate(${this.diameter * -0.5 + _points[index][0]}px, ${
@@ -990,11 +969,11 @@ div.play ul li.before .up {
       }
     }
     .soccer-ani-R {
-      // animation: soccerRotateR 5s linear infinite;
+      animation: soccerRotateR 5s linear infinite;
     }
 
     .soccer-ani-L {
-      // animation: soccerRotateL 5s linear infinite;
+      animation: soccerRotateL 5s linear infinite;
     }
     .soccer-shader {
       width: 2.13333rem;
