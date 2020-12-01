@@ -1,7 +1,7 @@
 <template>
   <div class="role-page">
     <div class="return" @click="toGuide"></div>
-    <router-link class="next" :to="{name:'playpage'}"></router-link>
+    <div class="next" @click="$emit('toplay', 0)"></div>
     <div class="roles">
       <div class="fbimg"></div>
       <div class="mx-abtn" v-if="isMx" @click="setrole(mxid)"></div>
@@ -45,7 +45,7 @@
       <!--这里是半透明背景层-->
       <div class="over"></div>
     </div>
-    <router-view></router-view>
+    <!-- <router-view></router-view> -->
   </div>
 </template>
 
@@ -125,14 +125,15 @@ export default {
     toplay () {
       this.popup = 0
       this.popup1 = 0
-      this.$router.push({
-        name: 'playpage',
-        params: {
-          roleId: -1,
-          userId: -1,
-          todayPyayCount: 11
-        }
+      this.$emit('toplay', 1, {
+        roleId: -1,
+        userId: -1,
+        todayPyayCount: 11
       })
+      // this.$router.push({
+      //   name: 'playpage',
+      //   params:
+      // })
     },
     // 提交用户信息
     submit () {
@@ -148,7 +149,7 @@ export default {
           url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Usersubmit',
           method: 'post',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          data:"mobile=" + this.mobile + '&' + "sex=" + "1" + '&' + "userName=" + this.username
+          data: 'mobile=' + this.mobile + '&' + 'sex=' + '1' + '&' + 'userName=' + this.username
         }).then(res => {
           if (res.data.code === '1') {
             this.todayPyayCount = res.data.data.isTodayPyayCount
@@ -159,14 +160,20 @@ export default {
             } else if (this.todayPyayCount >= 0 && this.todayPyayCount < 1) {
               this.userId = res.data.data.tbUser.userId
               this.popup = 0
-              this.$router.push({
-                name: 'playpage',
-                params: {
-                  roleId: this.roleId,
-                  userId: this.userId,
-                  todayPyayCount: this.todayPyayCount
-                }
+
+              this.$emit('toplay', 1, {
+                roleId: this.roleId,
+                userId: this.userId,
+                todayPyayCount: this.todayPyayCount
               })
+              // this.$router.push({
+              //   name: 'playpage',
+              //   params: {
+              //     roleId: this.roleId,
+              //     userId: this.userId,
+              //     todayPyayCount: this.todayPyayCount
+              //   }
+              // })
             }
             this.mobile = ''
             this.username = ''

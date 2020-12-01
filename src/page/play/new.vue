@@ -1,6 +1,6 @@
 <template>
   <div class="play-page">
-    <router-link class="next" to="/showbillpage"></router-link>
+    <div class="next" @click="$emit('tobill')"></div>
 <!--    <div @click="showbill"></div>-->
     <div class="lawn">
 <!--      <div class="goal"></div>-->
@@ -37,7 +37,7 @@
         </div>
       </div>
       <div class="smallf">
-        <div v-for="num in smallnum">
+        <div v-for="num in smallnum" :key="num">
           <div :id="num" class="smallfb"></div>
 <!--          <img src="../../assets/imgs/small-f.png">-->
         </div>
@@ -170,7 +170,20 @@ export default {
       isRotate: false,
       isHit: false,
       isEnd: false,
-      isShowScore: true
+      isShowScore: true,
+      isSwiper: true
+    }
+  },
+  props: {
+    args: {
+      type: Object,
+      default () {
+        return {
+          roleId: -1,
+          userId: -1,
+          todayPyayCount: 11
+        }
+      }
     }
   },
   methods: {
@@ -197,7 +210,8 @@ export default {
     },
     handleSwipe (evt) {
       console.log(evt)
-
+      if (!this.isSwiper) return
+      this.isSwiper = false
       if (evt.angle > 20 || evt.angle < -160) return
 
       const initPox = [this.initialPosX, this.initialPosY]
@@ -353,8 +367,8 @@ export default {
       this.diameter * 0.5 - this.initialPosY
       }px) scale(1)`
 
-      soccer.style.left = `0px`
-      soccer.style.bottom = `0px`
+      soccer.style.left = '0px'
+      soccer.style.bottom = '0px'
 
       const shader = this.$refs.shader
       shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 10}px`
@@ -503,6 +517,7 @@ export default {
     // 得分，位置，等信息同上
     triggerEnd (data) {
       this.isRotate = false
+      this.isSwiper = true
       this.myscore += data.score
       this.index++
       this.addScore(this.myscore)
@@ -539,7 +554,7 @@ export default {
         url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Scoresubmit',
         method: 'post',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        data:"roleId=" + this.roleId + '&' + "userId=" + this.userId + '&' + "score=" + this.myscore
+        data: 'roleId=' + this.roleId + '&' + 'userId=' + this.userId + '&' + 'score=' + this.myscore
       }).then(res => {
         this.popup1 = 0
         if (res.data.code === '1') {
@@ -583,9 +598,9 @@ export default {
     //   this.isPlay = false
     //   this.isPlay = true
     // }, 500)
-    this.roleId = this.$route.params.roleId
-    this.userId = this.$route.params.userId
-    this.todayPyayCount = this.$route.params.todayPyayCount
+    this.roleId = this.args.roleId
+    this.userId = this.args.userId
+    this.todayPyayCount = this.args.todayPyayCount
     if (this.roleId === 2) {
       this.roleName = '梅西'
     } else if (this.roleId === 1) {

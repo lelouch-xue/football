@@ -17,8 +17,9 @@
       @change="handleChangeSwiper"
     >
       <van-swipe-item><c-guide @disableSwip="(v) => touchable = v"></c-guide></van-swipe-item>
-      <van-swipe-item><c-role @touchable="onTouchableChange(0)"></c-role></van-swipe-item>
-<!--      <van-swipe-item><c-showbill></c-showbill></van-swipe-item>-->
+      <van-swipe-item><c-role @toplay="handleSwitchToPlay" @touchable="onTouchableChange(0)"></c-role></van-swipe-item>
+      <van-swipe-item><c-play :args="args" @tobill="handleSwitchToBill"></c-play></van-swipe-item>
+      <van-swipe-item><c-bill></c-bill></van-swipe-item>
     </van-swipe>
   </div>
 </template>
@@ -26,16 +27,25 @@
 <script>
 import guide from '@/page/guide/index.vue'
 import role from '@/page/role/index.vue'
+import play from '@/page/play/new.vue'
+import bill from '@/page/showbill/index.vue'
 export default {
   name: 'App',
   components: {
     'c-guide': guide,
-    'c-role': role
+    'c-role': role,
+    'c-play': play,
+    'c-bill': bill
   },
   data () {
     return {
       touchable: true,
-      initialSwipe: 0
+      initialSwipe: 0,
+      args: {
+        roleId: -1,
+        userId: -1,
+        todayPyayCount: 11
+      }
     }
   },
   // created: {
@@ -58,6 +68,25 @@ export default {
     },
     swipeTo (num) {
       location.reload()
+    },
+    handleSwitchToPlay (type, args) {
+      if (type === 1) {
+        this.args = {
+          roleId: -1,
+          userId: -1,
+          todayPyayCount: 11
+        }
+      } else if (type === 2) {
+        this.args = args
+      }
+      this.$refs.swiper.swipeTo(2, {
+        immediate: true
+      })
+    },
+    handleSwitchToBill () {
+      this.$refs.swiper.swipeTo(3, {
+        immediate: true
+      })
     }
   }
 }

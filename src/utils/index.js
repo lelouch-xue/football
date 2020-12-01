@@ -213,37 +213,37 @@ const positions = {
   lt: {
     hitrate: 50,
     score: 10,
-    putout: 10,
-    frame: 10
+    putout: 20,
+    frame: 15
   },
   lb: {
     hitrate: 70,
     score: 7,
-    putout: 20,
+    putout: 25,
     frame: 15
   },
   mt: {
     hitrate: 90,
     score: 5,
-    putout: 15,
-    frame: 15
+    putout: 20,
+    frame: 25
   },
   mb: {
     hitrate: 90,
     score: 5,
-    putout: 25,
+    putout: 30,
     frame: 0
   },
   rt: {
     hitrate: 50,
     score: 10,
-    putout: 10,
-    frame: 10
+    putout: 20,
+    frame: 15
   },
   rb: {
     hitrate: 70,
     score: 7,
-    putout: 20,
+    putout: 25,
     frame: 15
   }
 }
