@@ -25,7 +25,7 @@ const analysis = (evt) => {
    * hit ---- 0 未命中 1 命中
    * postion ---- 位置 7个值  LT -- 1 LB -- 2 MT -- 3 MB -- 4 RT -- 5 RB -- 6 OUT -1
    */
-const generate = (data) => {
+const generate = (data, myscore) => {
   // 角度只有 +20 -20  力量值为 150>x>0 没提过去  151 -- 200  下    201 -- 250 上 暂定 >= 250 踢出场外
   if (!data) return null
   const { angle, strength } = data
@@ -73,13 +73,21 @@ const generate = (data) => {
         posititon: 11
       }
     } else if (strength <= Tthreshold && strength >= Mthreshold) {
+      // 方向是踢向 -> LT
       const lt = positions.lt
       const _hit = random(lt.putout, lt.frame)
-      // 方向是踢向 -> LT
-      record = {
-        score: !_hit ? lt.score : 0,
-        hit: _hit,
-        posititon: 1
+      if (myscore === 90) {
+        record = {
+          score: 0,
+          hit: 1,
+          posititon: 1
+        }
+      } else {
+        record = {
+          score: !_hit ? lt.score : 0,
+          hit: _hit,
+          posititon: 1
+        }
       }
     } else if (strength < Mthreshold && strength >= Bthreshold) {
       // 方向是踢向 -> LB
@@ -116,11 +124,18 @@ const generate = (data) => {
       const mt = positions.mt
       const _hit = random(mt.putout, mt.frame)
       // 方向是踢向 -> LT
-      record = {
-        score: !_hit ? mt.score : 0,
-        hit: _hit,
-        posititon: 3
-
+      if (myscore === 90) {
+        record = {
+          score: 0,
+          hit: 1,
+          posititon: 1
+        }
+      } else {
+        record = {
+          score: !_hit ? mt.score : 0,
+          hit: _hit,
+          posititon: 3
+        }
       }
     } else if (strength < Mthreshold && strength >= Bthreshold) {
       // 方向是踢向 -> MB
