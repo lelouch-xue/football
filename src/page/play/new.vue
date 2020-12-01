@@ -593,6 +593,12 @@ export default {
           hit.play()
           break
       }
+    },
+    init (data) {
+      console.log(data)
+      setTimeout(() => {
+        this.isShowScore = false
+      }, 2500)
     }
   },
   created () {
@@ -673,10 +679,6 @@ export default {
 
     goal.style.transform = `translateX(${this.goalwidth * -0.5}px)`
     goal.style.left = `${actualwidth * 0.5}px`
-
-    setTimeout(() => {
-      this.isShowScore = false
-    }, 2500)
   }
 }
 </script>

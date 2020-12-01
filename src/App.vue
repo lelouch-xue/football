@@ -18,7 +18,7 @@
     >
       <van-swipe-item><c-guide @disableSwip="(v) => touchable = v"></c-guide></van-swipe-item>
       <van-swipe-item><c-role @toplay="handleSwitchToPlay" @touchable="onTouchableChange(0)"></c-role></van-swipe-item>
-      <van-swipe-item><c-play :args="args" @tobill="handleSwitchToBill"></c-play></van-swipe-item>
+      <van-swipe-item><c-play ref="play" :args="args" @tobill="handleSwitchToBill"></c-play></van-swipe-item>
       <van-swipe-item><c-bill></c-bill></van-swipe-item>
     </van-swipe>
   </div>
@@ -79,6 +79,7 @@ export default {
       } else if (type === 2) {
         this.args = args
       }
+      this.$refs.play.init()
       this.$refs.swiper.swipeTo(2, {
         immediate: true
       })
