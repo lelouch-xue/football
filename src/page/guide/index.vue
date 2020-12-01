@@ -1,5 +1,6 @@
 <template>
   <div class="guide-page">
+    <div class="bg0" :style="`opacity: ${isShowBg0 ? '1' : '0'}`"></div>
 <!--    <van-button type="primary"></van-button>-->
     <div class="torule" @click="showpopup"></div>
     <div class="swiper-tip"></div>
@@ -20,7 +21,8 @@ export default {
   name: 'guide',
   data () {
     return {
-      popup: 0
+      popup: 0,
+      isShowBg0: true
     }
   },
   methods: {
@@ -34,6 +36,11 @@ export default {
       this.$emit('disableSwip', true)
       this.popup = 0
     }
+  },
+  mounted () {
+    setTimeout(() => {
+      this.isShowBg0 = false
+    }, 2000)
   }
 }
 </script>
@@ -46,6 +53,16 @@ export default {
   background-image: url("../../assets/imgs/bg1.jpg");
   background-size: 100% 100%;
   /*position: relative;*/
+  .bg0{
+    background-image: url("../../assets/imgs/bg0.jpg");
+    background-size: 100% 100%;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 800ms linear;
+  }
   .torule {
     background-image: url("../../assets/imgs/torule.png");
     width: 120px;

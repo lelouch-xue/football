@@ -88,7 +88,7 @@
           <div v-if="isHit" class="goal-hit hit-ani" :class="{'hit-ani': isEnd}"></div>
           <div v-else class="miss-hit hit-ani" :class="{'hit-ani': isEnd}"></div>
         </template>
-        <div ref="virturl" class="soccer-virturl" v-hammer:swipe="handleSwipe">
+        <div v-if="isSwiper" ref="virturl" class="soccer-virturl" v-hammer:swipe="handleSwipe">
         </div>
       </div>
     </section>
@@ -243,8 +243,10 @@ export default {
     },
     handleSwipe (evt) {
       console.log(evt)
+
       if (!this.isSwiper) return
       this.isSwiper = false
+
       if (evt.angle > 20 || evt.angle < -160) return
 
       const initPox = [this.initialPosX, this.initialPosY]
@@ -254,10 +256,11 @@ export default {
       // 此时应该知道得分和命中情况，
       const opt = analysis(evt)
       // 此方法会计算出得分情况及击中与否，位置等信息
-      const res = generate(opt)
+      const res = generate(opt, this.myscore)
       // this.angel = res.posititon
-      console.log(res)
+      console.log(this.myscore)
       const { posititon, hit } = res
+
       // const hit = 2
       if (posititon >= 1 && posititon <= 6) {
         if (hit !== 2) {
@@ -394,6 +397,7 @@ export default {
       shader.style.transition = 'all 160ms linear'
     },
     handleReset () {
+      this.isSwiper = true
       const soccer = this.$refs.soccer
       soccer.style.display = 'block'
       soccer.style.transform = `translate(${this.diameter * -0.5 + this.initialPosX}px, ${
@@ -549,8 +553,9 @@ export default {
     // 滑动动画开始
     // 得分，位置，等信息同上
     triggerEnd (data) {
+      console.log(data)
       this.isRotate = false
-      this.isSwiper = true
+
       this.myscore += data.score
       this.index++
       this.addScore(this.myscore)
@@ -683,24 +688,9 @@ export default {
       } else if (this.roleId === 1) {
         this.roleName = 'C罗'
       }
-    }
-  },
-  created () {
-    // const id = 1
-    // const aa = id * 3 + 2
-    // setTimeout(() => {
-    //   this.activeNum = [parseInt(aa), parseInt(aa)]
-    //   this.isPlay = false
-    //   this.isPlay = true
-    // }, 500)
-    // this.roleId = this.args.roleId
-    // this.userId = this.args.userId
-    // this.todayPyayCount = this.args.todayPyayCount
-    console.log('adfadfaf', this.roleId, this.userId, this.todayPyayCount)
-    if (this.roleId === 2) {
-      this.roleName = '梅西'
-    } else if (this.roleId === 1) {
-      this.roleName = 'C罗'
+      setTimeout(() => {
+        this.isShowScore = false
+      }, 2500)
     }
   },
   mounted () {
@@ -763,10 +753,6 @@ export default {
 
     goal.style.transform = `translateX(${this.goalwidth * -0.5}px)`
     goal.style.left = `${actualwidth * 0.5}px`
-
-    setTimeout(() => {
-      this.isShowScore = false
-    }, 2500)
   }
 }
 </script>
