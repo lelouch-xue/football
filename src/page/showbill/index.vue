@@ -1,17 +1,17 @@
 <template>
   <div class="showbill-page">
-    <div class="showjf" @click="showjf"></div>
-    <!--积分榜-->
-    <div v-show="popup3">
-      <!--这里是要展示的内容层-->
-      <div class="zlbg">
-        <div class="closerule" @click="closepopup"></div>
-        <div class="clscore">{{clscore}}分</div>
-        <div class="mxscore">{{mxscore}}分</div>
-      </div>
-      <!--这里是半透明背景层-->
-      <div class="over"></div>
-    </div>
+<!--    <div class="showjf" @click="showjf"></div>-->
+<!--    &lt;!&ndash;积分榜&ndash;&gt;-->
+<!--    <div v-show="popup3">-->
+<!--      &lt;!&ndash;这里是要展示的内容层&ndash;&gt;-->
+<!--      <div class="zlbg">-->
+<!--        <div class="closerule" @click="closepopup"></div>-->
+<!--        <div class="clscore">{{clscore}}分</div>-->
+<!--        <div class="mxscore">{{mxscore}}分</div>-->
+<!--      </div>-->
+<!--      &lt;!&ndash;这里是半透明背景层&ndash;&gt;-->
+<!--      <div class="over"></div>-->
+<!--    </div>-->
   </div>
 </template>
 

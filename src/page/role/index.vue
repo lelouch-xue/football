@@ -1,37 +1,13 @@
 <template>
   <div class="role-page">
     <div class="return" @click="toGuide"></div>
-    <div class="next" @click="$emit('toplay', 0)"></div>
+    <div class="next" @click="toplay"></div>
     <div class="roles">
       <div class="fbimg"></div>
       <div class="mx-abtn" v-if="isMx" @click="setrole(mxid)"></div>
       <div class="mxbtn" v-if="!isMx" @click="setrole(mxid)"></div>
       <div class="clbtn" v-if="isMx" @click="setrole(clid)"></div>
       <div class="cl-abtn" v-if="!isMx" @click="setrole(clid)"></div>
-    </div>
-    <!--提交用户信息-->
-    <div v-show="popup">
-      <!--这里是要展示的内容层-->
-      <div class="userform">
-        <div class="closerule" @click="closepopup"></div>
-        <div><input v-model="username" class="username" placeholder="姓 名" /></div>
-        <div><input v-model="mobile" class="mobile" placeholder="电 话" type="number" /></div>
-        <div class="submit" @click="submit"></div>
-        <div class="jump" @click="toplay"></div>
-      </div>
-      <!--这里是半透明背景层-->
-      <div class="over"></div>
-    </div>
-    <!--明天再来-->
-    <div v-show="popup1">
-      <!--这里是要展示的内容层-->
-      <div class="seeyou">
-        <div class="closerule" @click="closepopup"></div>
-<!--        <router-link class="submit" to='/playpage'></router-link>-->
-        <div class="submit" @click="toplay"></div>
-      </div>
-      <!--这里是半透明背景层-->
-      <div class="over"></div>
     </div>
     <div class="showjf" @click="showjf"></div>
     <!--积分榜-->
@@ -59,15 +35,12 @@ export default {
   data () {
     return {
       isMx: true,
-      popup: 0,
-      popup1: 0,
+      // popup: 0,
+      // popup1: 0,
       mxid: 2,
       clid: 1,
-      roleId: -1,
-      userId: -1,
-      username: '',
-      mobile: '',
-      todayPyayCount: 0,
+      // roleId: -1,
+      // userId: -1,
       popup3: 0,
       clscore: 0,
       mxscore: 0
@@ -105,87 +78,36 @@ export default {
     },
     // 选择角色
     setrole (roleid) {
-      this.roleId = roleid
+      // this.roleId = roleid
       if (roleid === this.mxid) {
         this.isMx = true
       } else if (parseInt(roleid) === parseInt(this.clid)) {
         this.isMx = false
       }
-      this.popup = 1
+      this.$emit('toplay', 2, {
+        roleId: roleid
+        // userId: -1,
+        // todayPyayCount: 11
+      })
+      // this.popup = 1
     },
     toGuide () {
       this.$emit('touchable')
     },
     // 关闭活动规则页面
     closepopup () {
-      this.popup1 = 0
       this.popup3 = 0
-      this.popup = 0
     },
     toplay () {
-      this.popup = 0
-      this.popup1 = 0
       this.$emit('toplay', 1, {
-        roleId: -1,
-        userId: -1,
-        todayPyayCount: 11
+        roleId: -1
+        // userId: -1,
+        // todayPyayCount: 11
       })
       // this.$router.push({
       //   name: 'playpage',
       //   params:
       // })
-    },
-    // 提交用户信息
-    submit () {
-      if (this.mobile === '') {
-        Dialog.alert({
-          message: '请填写手机号～'
-        }).then(() => {
-          // on close
-        })
-      } else {
-        axios({
-          // url: '/api/user/add',
-          url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Usersubmit',
-          method: 'post',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          data: 'mobile=' + this.mobile + '&' + 'sex=' + '1' + '&' + 'userName=' + this.username
-        }).then(res => {
-          if (res.data.code === '1') {
-            this.todayPyayCount = res.data.data.isTodayPyayCount
-            if (this.todayPyayCount >= 1) {
-              // 今日已提交，明天再来
-              this.popup = 0
-              this.popup1 = 1
-            } else if (this.todayPyayCount >= 0 && this.todayPyayCount < 1) {
-              this.userId = res.data.data.tbUser.userId
-              this.popup = 0
-
-              this.$emit('toplay', 1, {
-                roleId: this.roleId,
-                userId: this.userId,
-                todayPyayCount: this.todayPyayCount
-              })
-              // this.$router.push({
-              //   name: 'playpage',
-              //   params: {
-              //     roleId: this.roleId,
-              //     userId: this.userId,
-              //     todayPyayCount: this.todayPyayCount
-              //   }
-              // })
-            }
-            this.mobile = ''
-            this.username = ''
-          } else {
-            Dialog.alert({
-              message: res.data.msg
-            }).then(() => {
-              // on close
-            })
-          }
-        })
-      }
     },
     showjf () {
       this.popup3 = 1
@@ -275,102 +197,15 @@ export default {
       right: 20px;
     }
   }
-  .seeyou{
-    position: absolute;
-    height: 140px;
-    width: 280px;
-    border-radius: 0.25rem;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    background-image: url("../../assets/imgs/seeyou.png");
-    background-size: 100%;
-    .submit{
-      width: 85px;
-      height: 30px;
-      background-image: url("../../assets/imgs/goon1.png");
-      background-size: 100% 100%;
-      position: absolute;
-      left: 50%;
-      top: 60%;
-      margin-left: -45px;
-    }
-  }
-  .userform {
-    position: absolute;
-    height: 280px;
-    width: 280px;
-    border-radius: 0.25rem;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    background-image: url("../../assets/imgs/userinfo.png");
-    background-size: 100%;
-    .closerule{
-      position: absolute;
-      left: 10px;
-      top:10px;
-      width: 20px;
-      height: 20px;
-      background-image: url("../../assets/imgs/closerule.png");
-      background-size: 100%;
-    }
-    .username{
-      width: 200px;
-      height: 30px;
-      border-radius: 10px;
-      border:1px solid #000000;
-      background-color: #ffffff;
-      position: absolute;
-      left: 50%;
-      top: 35%;
-      margin-left: -115px;
-      padding-left: 20px;
-    }
-    .mobile{
-      width: 200px;
-      height: 30px;
-      border-radius: 10px;
-      border:1px solid #000000;
-      background-color: #ffffff;
-      position: absolute;
-      left: 50%;
-      top: 52%;
-      margin-left: -115px;
-      padding-left: 20px;
-    }
-    .submit{
-      width: 85px;
-      height: 33px;
-      background-image: url("../../assets/imgs/submit.png");
-      background-size: 100% 100%;
-      position: absolute;
-      left: 30%;
-      top: 73%;
-      margin-left: -45px;
-    }
-    .jump{
-      width: 85px;
-      height: 33px;
-      background-image: url("../../assets/imgs/jump.png");
-      background-size: 100% 100%;
-      position: absolute;
-      right: 15%;
-      top: 73%;
-      margin-left: -45px;
-    }
-  }
   .showjf{
-    width: 130px;
-    height: 50px;
+    width: 100px;
+    height: 38px;
     background-image: url("../../assets/imgs/jfbtn.png");
     background-size: 100% 100%;
     position: absolute;
     top:21%;
     left: 50%;
-    margin-left: -55px;
+    margin-left: -45px;
   }
   .zlbg{
     position: absolute;

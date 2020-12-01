@@ -103,7 +103,31 @@
         <div class="closerule" @click="closepopup"></div>
         <div class="info">您为{{roleName}}助力{{myscore}}分！</div>
         <div class="reset" @click="reset"></div>
-        <div class="zlbtn" @click="postScore"></div>
+        <div class="zlbtn" @click="popup2 = 1, popup1 = 0"></div>
+      </div>
+      <!--这里是半透明背景层-->
+<!--      <div class="over"></div>-->
+    </div>
+    <!--提交用户信息-->
+    <div v-show="popup2">
+      <!--这里是要展示的内容层-->
+      <div class="userform">
+        <div class="closerule" @click="closepopup"></div>
+        <div><input v-model="username" class="username" placeholder="姓 名" /></div>
+        <div><input v-model="mobile" class="mobile" placeholder="电 话" type="number" /></div>
+        <div class="submit" @click="submit"></div>
+        <div class="jump" @click="closepopup"></div>
+      </div>
+      <!--这里是半透明背景层-->
+<!--      <div class="over"></div>-->
+    </div>
+    <!--明天再来-->
+    <div v-show="popup3">
+      <!--这里是要展示的内容层-->
+      <div class="seeyou">
+        <div class="closerule" @click="closepopup"></div>
+        <!--        <router-link class="submit" to='/playpage'></router-link>-->
+        <div class="submit" @click="closepopup"></div>
       </div>
       <!--这里是半透明背景层-->
       <div class="over"></div>
@@ -142,9 +166,14 @@ export default {
       playover: false,
       popup: 0,
       popup1: 0,
+      popup2: 0,
+      popup3: 0,
       roleId: -1,
       userId: -1,
       roleName: '梅西',
+      username: '',
+      mobile: '',
+      todayPyayCount: 0,
 
       timer: null,
       angel: '0',
@@ -191,7 +220,11 @@ export default {
     closepopup () {
       this.playover = false
       this.popup = 0
+      this.popup1 = 0
+      this.popup2 = 0
+      this.popup3 = 0
       this.myscore = 0
+      this.smallnum = 10
     },
     // 打开海报
     // showbill () {
@@ -532,11 +565,13 @@ export default {
         if (this.smallnum === 0) {
           // 游戏结束
           this.playover = true
-          if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 1) {
-            this.popup1 = 1
-            // 将踢球分数传给接口
-            // this.postScore()
-          }
+          // 重玩助力
+          this.popup1 = 1
+          // if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 1) {
+          //   this.popup1 = 1
+          //   // 将踢球分数传给接口
+          //   // this.postScore()
+          // }
         }
       }, 1000)
     },
@@ -562,6 +597,12 @@ export default {
           // this.addScore(this.myscore)
           if (res.data.isWin === 1) {
             this.popup = 1
+          } else {
+            Dialog.alert({
+              message: res.data.msg
+            }).then(() => {
+              // on close
+            })
           }
         } else {
           Dialog.alert({
@@ -588,6 +629,60 @@ export default {
           hit.play()
           break
       }
+    },
+    // 提交用户信息
+    submit () {
+      if (this.mobile === '') {
+        Dialog.alert({
+          message: '请填写手机号～'
+        }).then(() => {
+          // on close
+        })
+      } else {
+        axios({
+          // url: '/api/user/add',
+          url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Usersubmit',
+          method: 'post',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          data: 'mobile=' + this.mobile + '&' + 'sex=' + '1' + '&' + 'userName=' + this.username
+        }).then(res => {
+          if (res.data.code === '1') {
+            this.popup2 = 0
+            this.todayPyayCount = res.data.data.isTodayPyayCount
+            if (this.todayPyayCount >= 1) {
+              // 今日已提交，明天再来
+              this.popup = 0
+              this.popup3 = 1
+            } else if (this.todayPyayCount >= 0 && this.todayPyayCount < 1) {
+              this.userId = res.data.data.tbUser.userId
+              this.popup = 0
+              this.postScore()
+              // this.$emit('toplay', 1, {
+              //   roleId: this.roleId,
+              //   userId: this.userId,
+              //   todayPyayCount: this.todayPyayCount
+              // })
+            }
+            this.mobile = ''
+            this.username = ''
+          } else {
+            Dialog.alert({
+              message: res.data.msg
+            }).then(() => {
+              // on close
+            })
+          }
+        })
+      }
+    },
+    init (data) {
+      console.log('adf4444', data)
+      this.roleId = data.roleId
+      if (this.roleId === 2) {
+        this.roleName = '梅西'
+      } else if (this.roleId === 1) {
+        this.roleName = 'C罗'
+      }
     }
   },
   created () {
@@ -598,9 +693,10 @@ export default {
     //   this.isPlay = false
     //   this.isPlay = true
     // }, 500)
-    this.roleId = this.args.roleId
-    this.userId = this.args.userId
-    this.todayPyayCount = this.args.todayPyayCount
+    // this.roleId = this.args.roleId
+    // this.userId = this.args.userId
+    // this.todayPyayCount = this.args.todayPyayCount
+    console.log('adfadfaf', this.roleId, this.userId, this.todayPyayCount)
     if (this.roleId === 2) {
       this.roleName = '梅西'
     } else if (this.roleId === 1) {
@@ -876,6 +972,93 @@ export default {
       position: absolute;
       z-index: 1001;
       animation: lamlight 2s linear infinite;
+    }
+  }
+  .seeyou{
+    position: absolute;
+    height: 140px;
+    width: 280px;
+    border-radius: 0.25rem;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1100;
+    background-image: url("../../assets/imgs/seeyou.png");
+    background-size: 100%;
+    .submit{
+      width: 85px;
+      height: 30px;
+      background-image: url("../../assets/imgs/goon1.png");
+      background-size: 100% 100%;
+      position: absolute;
+      left: 50%;
+      top: 60%;
+      margin-left: -45px;
+    }
+  }
+  .userform {
+    position: absolute;
+    height: 170px;
+    width: 280px;
+    border-radius: 0.25rem;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1100;
+    background-image: url("../../assets/imgs/userinfo.png");
+    background-size: 100%;
+    .closerule{
+      position: absolute;
+      left: 10px;
+      top:10px;
+      width: 20px;
+      height: 20px;
+      background-image: url("../../assets/imgs/closerule.png");
+      background-size: 100%;
+    }
+    .username{
+      width: 220px;
+      height: 25px;
+      border-radius: 10px;
+      border:1px solid #000000;
+      background-color: #ffffff;
+      position: absolute;
+      left: 50%;
+      top: 35%;
+      margin-left: -115px;
+      padding-left: 20px;
+    }
+    .mobile{
+      width: 220px;
+      height: 25px;
+      border-radius: 10px;
+      border:1px solid #000000;
+      background-color: #ffffff;
+      position: absolute;
+      left: 50%;
+      top: 53%;
+      margin-left: -115px;
+      padding-left: 20px;
+    }
+    .submit{
+      width: 80px;
+      height: 30px;
+      background-image: url("../../assets/imgs/utjbtn.png");
+      background-size: 100% 100%;
+      position: absolute;
+      left: 30%;
+      top: 73%;
+      margin-left: -45px;
+    }
+    .jump{
+      width: 80px;
+      height: 30px;
+      background-image: url("../../assets/imgs/utgbtn.png");
+      background-size: 100% 100%;
+      position: absolute;
+      right: 15%;
+      top: 73%;
+      margin-left: -45px;
     }
   }
 }

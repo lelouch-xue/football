@@ -70,7 +70,7 @@ export default {
   }
   .seerule {
     position: absolute;
-    height: 200px;
+    height: 365px;
     width: 280px;
     border-radius: 0.25rem;
     left: 50%;
