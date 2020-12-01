@@ -87,16 +87,19 @@ export default {
   },
   methods: {
     init () {
-      axios('/api/role/list', {
-      // axios('/api/dqdz/Rolelist', {
+      // axios('/api/role/list', {
+      axios('http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Rolelist', {
         params: {}
       }).then(res => {
-        if (res.data.code === '0') {
+        if (res.data.code !== '1') {
           Dialog.alert({
             message: res.data.msg
           }).then(() => {
             // on close
           })
+        } else {
+          this.clscore = res.data.data[1].countScore
+          this.mxscore = res.data.data[0].countScore
         }
       })
     },
@@ -141,23 +144,20 @@ export default {
         })
       } else {
         axios({
-          url: '/api/user/add',
-          // url: '/api/dqdz/Usersubmit',
+          // url: '/api/user/add',
+          url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Usersubmit',
           method: 'post',
-          data: {
-            mobile: this.mobile,
-            sex: '1',
-            userName: this.username
-          }
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          data:"mobile=" + this.mobile + '&' + "sex=" + "1" + '&' + "userName=" + this.username
         }).then(res => {
-          if (res.data.code === 0) {
+          if (res.data.code === '1') {
             this.todayPyayCount = res.data.data.isTodayPyayCount
-            if (this.todayPyayCount >= 10) {
+            if (this.todayPyayCount >= 1) {
               // 今日已提交，明天再来
               this.popup = 0
               this.popup1 = 1
-            } else if (this.todayPyayCount >= 0 && this.todayPyayCount < 10) {
-              this.userId = res.data.data.tbUser.id
+            } else if (this.todayPyayCount >= 0 && this.todayPyayCount < 1) {
+              this.userId = res.data.data.tbUser.userId
               this.popup = 0
               this.$router.push({
                 name: 'playpage',
@@ -219,7 +219,7 @@ export default {
     background-image: url("../../assets/imgs/roles.png");
     background-size: 100% 100%;
     position: absolute;
-    bottom: 20vh;
+    bottom: 13vh;
     left: 10vw;
     .fbimg {
       width: 40px;

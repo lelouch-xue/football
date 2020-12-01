@@ -399,7 +399,7 @@ export default {
       timer = setInterval(() => {
         if (index > len - 1) {
           clearInterval(timer)
-          this.triggerEnd(data)
+          // this.triggerEnd(data)
           return
         }
 
@@ -517,7 +517,7 @@ export default {
         if (this.smallnum === 0) {
           // 游戏结束
           this.playover = true
-          if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 11) {
+          if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 1) {
             this.popup1 = 1
             // 将踢球分数传给接口
             // this.postScore()
@@ -535,20 +535,17 @@ export default {
     // 将踢球分数传给后台
     postScore () {
       axios({
-        url: '/api/score/add',
-        // url: '/api/dqdz/Usersubmit',
+        // url: '/api/score/add',
+        url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Scoresubmit',
         method: 'post',
-        data: {
-          roleId: this.roleId,
-          userId: this.userId,
-          socre: this.myscore
-        }
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        data:"roleId=" + this.roleId + '&' + "userId=" + this.userId + '&' + "score=" + this.myscore
       }).then(res => {
         this.popup1 = 0
-        if (res.data.code === 0) {
+        if (res.data.code === '1') {
           // 记分牌累计分数
           // this.addScore(this.myscore)
-          if (res.data.data.isWinStr === '是') {
+          if (res.data.isWin === 1) {
             this.popup = 1
           }
         } else {

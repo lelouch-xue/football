@@ -32,15 +32,15 @@ export default {
   },
   methods: {
     init () {
-      // axios('/api/role/score', {
-      //   // axios('/api/dqdz/Rolelist', {
-      //   params: {}
-      // }).then(res => {
-      //   if (res.data.code === '0') {
-      //     this.clscore = res.data.data[0].allscore
-      //     this.mxscore = res.data.data[1].allscore
-      //   }
-      // })
+      // axios('/api/role/list', {
+      axios('http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Rolelist', {
+        params: {}
+      }).then(res => {
+        if (res.data.code === '1') {
+          this.clscore = res.data.data[1].countScore
+          this.mxscore = res.data.data[0].countScore
+        }
+      })
     },
     // 关闭活动规则页面
     closepopup () {
