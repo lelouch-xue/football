@@ -1,8 +1,7 @@
 <template>
   <div class="guide-page">
-    <div class="bg0" :style="`opacity: ${isShowBg0 ? '1' : '0'}`"></div>
 <!--    <van-button type="primary"></van-button>-->
-    <div class="torule" @click="showpopup"></div>
+    <div class="torule" @click="showpopup" :style="`z-index: ${isShowBg0 ? '900' : '1001'}`"></div>
     <div class="swiper-tip"></div>
     <!--查看规则-->
     <div v-show="popup">
@@ -13,6 +12,7 @@
       <!--这里是半透明背景层-->
       <div class="over"></div>
     </div>
+    <div class="bg0" :style="`opacity: ${isShowBg0 ? '1' : '0'}`"></div>
   </div>
 </template>
 
@@ -93,7 +93,7 @@ export default {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1000;
+    z-index: 1100;
     background-image: url("../../assets/imgs/seerule.png");
     background-size: 100%;
     .closerule{
@@ -114,7 +114,7 @@ export default {
     filter: alpha(opacity=80);
     top: 0;
     left: 0;
-    z-index: 999;
+    z-index: 1060;
     background-color: #111111;
   }
 }

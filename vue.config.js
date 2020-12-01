@@ -92,18 +92,18 @@ module.exports = {
     https: false,
     hotOnly: false,
     // http 代理配置
-    proxy: {
-      '/api': {
-        // target: 'http://47.111.65.173:8080',
-        // target: 'http://localhost:8080',
-        // target: 'https://123.56.2.234/c5_201706/activitiesApi.php',
-        target: 'https://123.56.2.234/c5_201706/activitiesApi.php',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': ''
-        }
-      }
-    },
+    // proxy: {
+    //   '/api': {
+    //     // target: 'http://47.111.65.173:8080',
+    //     // target: 'http://localhost:8080',
+    //     // target: 'https://123.56.2.234/c5_201706/activitiesApi.php',
+    //     target: 'https://123.56.2.234/c5_201706/activitiesApi.php',
+    //     changeOrigin: true,
+    //     pathRewrite: {
+    //       '^/api': ''
+    //     }
+    //   }
+    // },
     before: (app) => {
     }
   },
