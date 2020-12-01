@@ -124,18 +124,10 @@ const generate = (data, myscore) => {
       const mt = positions.mt
       const _hit = random(mt.putout, mt.frame)
       // 方向是踢向 -> LT
-      if (myscore === 90) {
-        record = {
-          score: 0,
-          hit: 1,
-          posititon: 1
-        }
-      } else {
-        record = {
-          score: !_hit ? mt.score : 0,
-          hit: _hit,
-          posititon: 3
-        }
+      record = {
+        score: !_hit ? mt.score : 0,
+        hit: _hit,
+        posititon: 3
       }
     } else if (strength < Mthreshold && strength >= Bthreshold) {
       // 方向是踢向 -> MB
@@ -170,11 +162,19 @@ const generate = (data, myscore) => {
       // 方向是踢向 -> RT
       const rt = positions.rt
       const _hit = random(rt.putout, rt.frame)
-      // 方向是踢向 -> LT
-      record = {
-        score: !_hit ? rt.score : 0,
-        hit: _hit,
-        posititon: 5
+      // 方向是踢向 -> RT
+      if (myscore === 90) {
+        record = {
+          score: 0,
+          hit: 1,
+          posititon: 5
+        }
+      } else {
+        record = {
+          score: !_hit ? rt.score : 0,
+          hit: _hit,
+          posititon: 5
+        }
       }
     } else if (strength < Mthreshold && strength >= Bthreshold) {
       // 方向是踢向 -> RB
