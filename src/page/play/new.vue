@@ -1,13 +1,25 @@
 <template>
   <div class="play-page">
-    <div class="next" @click="$emit('tobill')"></div>
-<!--    <div @click="showbill"></div>-->
+    <div class="next" @click="tobill"></div>
+    <!--    <div @click="showbill"></div>-->
     <div class="lawn">
-<!--      <div class="goal"></div>-->
+      <!--      <div class="goal"></div>-->
       <div class="scoreboard">
         <div :class="'bodyStyle '+(isPlay?'play':'')">
           <div class="container">
-            <ul class="flip secondPlay" v-for="p in [0,1]" :key="p">
+            <ul class="flip secondPlay" v-for="p in [0,1,2]" :key="p">
+              <li :class="(activeNum[p]===0?'':'before')">
+                <a href="#">
+                  <div class="up">
+                    <div class="shadow"></div>
+                    <div class="inn">0</div>
+                  </div>
+                  <div class="down">
+                    <div class="shadow"></div>
+                    <div class="inn">0</div>
+                  </div>
+                </a>
+              </li>
               <li :class="(activeNum[p]===0?'':'before')">
                 <a href="#">
                   <div class="up">
@@ -39,7 +51,7 @@
       <div class="smallf">
         <div v-for="num in smallnum" :key="num">
           <div :id="num" class="smallfb"></div>
-<!--          <img src="../../assets/imgs/small-f.png">-->
+          <!--          <img src="../../assets/imgs/small-f.png">-->
         </div>
       </div>
     </div>
@@ -47,8 +59,8 @@
     <div v-show="popup">
       <!--这里是要展示的内容层-->
       <div class="win">
-        <div class="closerule" @click="closepopup"></div>
-        <div class="submit" @click="closepopup"></div>
+<!--        <div class="closerule" @click="closepopup"></div>-->
+<!--        <div class="submit" @click="closepopup"></div>-->
       </div>
       <!--这里是半透明背景层-->
       <div class="over"></div>
@@ -82,19 +94,24 @@
             class="soccer-img"
           ></div>
         </div>
-
+        <div v-show="showTip" class="finger-tip" :class="{'finger-ani': showTip}"></div>
         <div ref='shader' class="soccer-shader"></div>
+        <div></div>
         <template v-if="isEnd">
           <div v-if="isHit" class="goal-hit hit-ani" :class="{'hit-ani': isEnd}"></div>
           <div v-else class="miss-hit hit-ani" :class="{'hit-ani': isEnd}"></div>
         </template>
-        <div v-if="isSwiper" ref="virturl" class="soccer-virturl" v-hammer:swipe="handleSwipe">
+        <div ref="virturl" class="soccer-virturl" v-hammer:swipe="handleSwipe">
         </div>
       </div>
     </section>
     <div class="bg4" v-if="playover">
-      <div class="overbg"></div>
-      <div class="playover"></div>
+      <div class="ewm"></div>
+      <div class="playover">
+        <div class="tips">恭喜您，为{{roleName}}助力{{myscore}}分，明天继续！</div>
+      </div>
+      <!--这里是半透明背景层-->
+      <div class="over"></div>
     </div>
     <!--重玩还是助力-->
     <div v-show="popup1">
@@ -106,20 +123,20 @@
         <div class="zlbtn" @click="popup2 = 1, popup1 = 0"></div>
       </div>
       <!--这里是半透明背景层-->
-<!--      <div class="over"></div>-->
+      <div class="over"></div>
     </div>
     <!--提交用户信息-->
     <div v-show="popup2">
       <!--这里是要展示的内容层-->
       <div class="userform">
-        <div class="closerule" @click="closepopup"></div>
+        <div class="closerule" @click="tobill"></div>
         <div><input v-model="username" class="username" placeholder="姓 名" /></div>
         <div><input v-model="mobile" class="mobile" placeholder="电 话" type="number" /></div>
         <div class="submit" @click="submit"></div>
-        <div class="jump" @click="closepopup"></div>
+        <div class="jump" @click="tobill"></div>
       </div>
       <!--这里是半透明背景层-->
-<!--      <div class="over"></div>-->
+      <div class="over"></div>
     </div>
     <!--明天再来-->
     <div v-show="popup3">
@@ -132,7 +149,7 @@
       <!--这里是半透明背景层-->
       <div class="over"></div>
     </div>
-<!--    <router-view></router-view>-->
+    <!--    <router-view></router-view>-->
     <div class="sounds-area">
       <audio ref="success" src="../../assets/sounds/goal.mp3"></audio>
       <audio ref="fail" src="../../assets/sounds/miss.mp3"></audio>
@@ -159,7 +176,7 @@ export default {
   name: 'clock',
   data () {
     return {
-      activeNum: [0, 0],
+      activeNum: [0, 0, 0],
       isPlay: false,
       // 每次玩10局
       smallnum: 10,
@@ -200,7 +217,8 @@ export default {
       isHit: false,
       isEnd: false,
       isShowScore: true,
-      isSwiper: true
+      isSwiper: true,
+      showTip: false
     }
   },
   props: {
@@ -227,9 +245,11 @@ export default {
       this.smallnum = 10
     },
     // 打开海报
-    // showbill () {
-    //   this.$router.push('/showbillpage')
-    // },
+    tobill () {
+      this.popup2 = 0
+      this.playover = false
+      this.$emit('tobill')
+    },
     handleClickReturnPrevPage () {
       this.$emit('touchable', true)
     },
@@ -244,10 +264,9 @@ export default {
     handleSwipe (evt) {
       console.log(evt)
 
+      if (evt.angle > 20 || evt.angle < -160) return
       if (!this.isSwiper) return
       this.isSwiper = false
-
-      if (evt.angle > 20 || evt.angle < -160) return
 
       const initPox = [this.initialPosX, this.initialPosY]
       let target = [60, 200]
@@ -401,7 +420,7 @@ export default {
       const soccer = this.$refs.soccer
       soccer.style.display = 'block'
       soccer.style.transform = `translate(${this.diameter * -0.5 + this.initialPosX}px, ${
-      this.diameter * 0.5 - this.initialPosY
+        this.diameter * 0.5 - this.initialPosY
       }px) scale(1)`
 
       soccer.style.left = '0px'
@@ -531,7 +550,7 @@ export default {
       let rotate = 0
       if (area === 1 || area === 2) { rotate = -45 } else if (area === 3 || area === 4) { rotate = 0 } else if (area === 5 || area === 6) { rotate = 45 }
       glove.style.transform = `translate(${this.diameter * -0.5 + position[0]}px, ${
-          this.diameter * 0.5 - position[1]}px) scale(0.35) rotate(${rotate}deg)`
+        this.diameter * 0.5 - position[1]}px) scale(0.35) rotate(${rotate}deg)`
       setTimeout(() => {
         glove.style.display = 'none'
       }, 1200)
@@ -544,7 +563,7 @@ export default {
     addScore (num) {
       const s = parseInt(num / 10 % 10)
       const g = num % 10
-      this.activeNum = [s, g]
+      this.activeNum = [0, s, g]
       this.isPlay = false
       this.isPlay = true
       this.smallnum--
@@ -568,8 +587,6 @@ export default {
       setTimeout(() => {
         this.handleReset()
         if (this.smallnum === 0) {
-          // 游戏结束
-          this.playover = true
           // 重玩助力
           this.popup1 = 1
           // if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 1) {
@@ -602,12 +619,13 @@ export default {
           // this.addScore(this.myscore)
           if (res.data.isWin === 1) {
             this.popup = 1
+            setTimeout(() => {
+              this.popup = 0
+              this.playover = true
+            }, 6000)
           } else {
-            Dialog.alert({
-              message: res.data.msg
-            }).then(() => {
-              // on close
-            })
+            // 游戏结束
+            this.playover = true
           }
         } else {
           Dialog.alert({
@@ -625,13 +643,34 @@ export default {
 
       switch (state) {
         case 1:
-          success.play()
+          if (typeof WeixinJSBridge === 'object' && typeof WeixinJSBridge.invoke === 'function') { // IOS
+            WeixinJSBridge.invoke('getNetworkType', {}, function (res) {
+              success.play()
+              // alert(hit)
+            })
+          } else { // Android
+            success.play()
+          }
           break
         case 2:
-          fail.play()
+          if (typeof WeixinJSBridge === 'object' && typeof WeixinJSBridge.invoke === 'function') { // IOS
+            WeixinJSBridge.invoke('getNetworkType', {}, function (res) {
+              fail.play()
+              // alert(hit)
+            })
+          } else { // Android
+            fail.play()
+          }
           break
         case 3:
-          hit.play()
+          if (typeof WeixinJSBridge === 'object' && typeof WeixinJSBridge.invoke === 'function') { // IOS
+            WeixinJSBridge.invoke('getNetworkType', {}, function (res) {
+              hit.play()
+              // alert(hit)
+            })
+          } else { // Android
+            hit.play()
+          }
           break
       }
     },
@@ -681,7 +720,6 @@ export default {
       }
     },
     init (data) {
-      console.log('adf4444', data)
       this.roleId = data.roleId
       if (this.roleId === 2) {
         this.roleName = '梅西'
@@ -690,7 +728,10 @@ export default {
       }
       setTimeout(() => {
         this.isShowScore = false
+        this.showTip = false
       }, 2500)
+
+      this.showTip = true
     }
   },
   mounted () {
@@ -758,483 +799,478 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.play-page{
-  position: relative;
-  background: gray;
-  width: 100vw;
-  height: 100vh;
-  background-image: url("../../assets/imgs/bg3.jpg");
-  background-size: 100% 100%;
-  position: relative;
-  .next{
-    width: 75px;
-    height: 35px;
-    background-image: url("../../assets/imgs/next.png");
-    background-size: 100% 100%;
-    position: absolute;
-    top:20px;
-    right:20px;
-    z-index: 1003;
-  }
-  .lawn {
+  .play-page{
+    position: relative;
     background: gray;
     width: 100vw;
-    height: 43vh;
-    background-image: url("../../assets/imgs/bg3-1.jpg");
+    height: 100vh;
+    background-image: url("../../assets/imgs/bg3.jpg");
     background-size: 100% 100%;
-    position: absolute;
-    bottom: 0;
-    .goal{
-      background-image: url("../../assets/imgs/goal.png");
+    position: relative;
+    .next{
+      width: 75px;
+      height: 35px;
+      background-image: url("../../assets/imgs/next.png");
       background-size: 100% 100%;
-      width: 300px;
-      height: 180px;
       position: absolute;
-      bottom: 90%;
-      left: 50%;
-      margin-left: -150px;
-      box-shadow: 0 -4px 50px rgba(255, 255, 255, 0.8);
-      z-index: 1000;
+      top:20px;
+      right:20px;
+      z-index: 1021;
     }
-    .scoreboard{
-      background-image: url("../../assets/imgs/scoreboard.png");
+    .lawn {
+      background: gray;
+      width: 100vw;
+      height: 43vh;
+      background-image: url("../../assets/imgs/bg3-1.jpg");
       background-size: 100% 100%;
-      width: 80px;
-      height: 80px;
       position: absolute;
-      bottom: 90%;
-      left: 50%;
-      margin-left: -40px;
-      z-index: 999;
-      margin-bottom: 180px;
-    }
-    .bigf{
-      width: 100px;
-      height: 100px;
-      position: absolute;
-      bottom: 45%;
-      left:50%;
-      margin-left: -50px;
-      img{
-        width: 100%;
+      bottom: 0;
+      .goal{
+        background-image: url("../../assets/imgs/goal.png");
+        background-size: 100% 100%;
+        width: 300px;
+        height: 180px;
+        position: absolute;
+        bottom: 90%;
+        left: 50%;
+        margin-left: -150px;
+        box-shadow: 0 -4px 50px rgba(255, 255, 255, 0.8);
         z-index: 1000;
-        position: absolute;
       }
-      .fshade{
-        width: 80px;
-        height: 10px;
-        border-radius: 5px;
-        background: none;
-        box-shadow: 0px 10px 10px #000;
+      .scoreboard{
+        background-image: url("../../assets/imgs/scoreboard.png");
+        background-size: 100% 100%;
+        width: 120px;
+        height: 80px;
         position: absolute;
-        bottom: 0px;
+        bottom: 90%;
+        left: 50%;
+        margin-left: -60px;
         z-index: 999;
+        margin-bottom: 180px;
       }
-    }
-    .smallf{
-      border:1px solid rgba(255, 255, 255, 0.4);
-      width: 280px;
-      height: 24px;
-      position: absolute;
-      bottom: 10%;
-      left: 50%;
-      margin-left: -140px;
-      div{
-        width: 10%;
-        float: left;
-        text-align: center;
-        .smallfb{
-          background-image: url("../../assets/imgs/small-f.png");
-          background-size: 100% 100%;
-          width: 60%;
-          height: 16px;
-          margin-top:15%;
-          margin-left: 20%;
+      .bigf{
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        bottom: 45%;
+        left:50%;
+        margin-left: -50px;
+        img{
+          width: 100%;
+          z-index: 1000;
+          position: absolute;
+        }
+        .fshade{
+          width: 80px;
+          height: 10px;
+          border-radius: 5px;
+          background: none;
+          box-shadow: 0px 10px 10px #000;
+          position: absolute;
+          bottom: 0px;
+          z-index: 999;
+        }
+      }
+      .smallf{
+        border:1px solid rgba(255, 255, 255, 0.4);
+        width: 280px;
+        height: 24px;
+        position: absolute;
+        bottom: 10%;
+        left: 50%;
+        margin-left: -140px;
+        div{
+          width: 10%;
+          float: left;
+          text-align: center;
+          .smallfb{
+            background-image: url("../../assets/imgs/small-f.png");
+            background-size: 100% 100%;
+            width: 60%;
+            height: 16px;
+            margin-top:15%;
+            margin-left: 20%;
+          }
         }
       }
     }
-  }
-  .zlbg{
-    position: absolute;
-    height: 140px;
-    width: 280px;
-    border-radius: 0.25rem;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    background-image: url("../../assets/imgs/zlbg.png");
-    background-size: 100%;
-    z-index: 1010;
-    .info{
-      color:#3f3d3a;
-      font-size: 20px;
-      text-align: center;
-      margin-top:30px;
-      font-weight: 500;
-    }
-    .reset{
-      width: 85px;
-      height: 35px;
-      background-image: url("../../assets/imgs/reset.png");
-      background-size: 100% 100%;
+    .zlbg{
       position: absolute;
-      left: 30%;
-      top: 60%;
-      margin-left: -45px;
-    }
-    .zlbtn{
-      width: 85px;
-      height: 35px;
-      background-image: url("../../assets/imgs/zlbtn.png");
-      background-size: 100% 100%;
-      position: absolute;
-      left: 70%;
-      top: 60%;
-      margin-left: -45px;
-    }
-  }
-  .win {
-    position: absolute;
-    height: 300px;
-    width: 240px;
-    border-radius: 0.25rem;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1020;
-    background-image: url("../../assets/imgs/win.png");
-    background-size: 100%;
-    .closerule{
-      position: absolute;
-      left: 10px;
-      top:10px;
-      width: 20px;
-      height: 20px;
-      background-image: url("../../assets/imgs/closerule.png");
-      background-size: 100%;
-    }
-    .submit{
-      width: 85px;
-      height: 30px;
-      background-image: url("../../assets/imgs/goon.png");
-      background-size: 100% 100%;
-      position: absolute;
+      height: 140px;
+      width: 280px;
+      border-radius: 0.25rem;
       left: 50%;
-      top: 73%;
-      margin-left: -45px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      background-image: url("../../assets/imgs/zlbg.png");
+      background-size: 100%;
+      z-index: 1010;
+      .info{
+        color:#3f3d3a;
+        font-size: 20px;
+        text-align: center;
+        margin-top:30px;
+        font-weight: 500;
+      }
+      .reset{
+        width: 85px;
+        height: 35px;
+        background-image: url("../../assets/imgs/reset.png");
+        background-size: 100% 100%;
+        position: absolute;
+        left: 30%;
+        top: 60%;
+        margin-left: -45px;
+      }
+      .zlbtn{
+        width: 85px;
+        height: 35px;
+        background-image: url("../../assets/imgs/zlbtn.png");
+        background-size: 100% 100%;
+        position: absolute;
+        left: 70%;
+        top: 60%;
+        margin-left: -45px;
+      }
     }
-  }
-  .over {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    opacity: 0.8;
-    filter: alpha(opacity=80);
-    top: 0;
-    left: 0;
-    z-index: 999;
-    background-color: #111111;
-  }
-  .bg4{
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    .playover{
-      background-image: url("../../assets/imgs/playover.png");
-      width: 100vw;
-      height: 40vh;
-      background-size: 100% 100%;
+    .win {
       position: absolute;
-      top:20%;
-      z-index: 1002;
+      height: 240px;
+      width: 240px;
+      border-radius: 0.25rem;
+      left: 50%;
+      top: 50%;
+      margin-top: -120px;
+      margin-left: -120px;
+      z-index: 1020;
+      background-image: url("../../assets/imgs/win.png");
+      background-size: 100%;
+      animation:move 3s 0s infinite;
     }
-    .overbg {
-      background-image: url("../../assets/imgs/bg4.png");
+    .over {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      opacity: 0.8;
+      filter: alpha(opacity=80);
+      top: 0;
+      left: 0;
+      z-index: 999;
+      background-color: #111111;
+    }
+    .bg4{
+      position: absolute;
       width: 100vw;
       height: 100vh;
-      background-size: 100% 100%;
-      opacity: 0.6;
-      position: absolute;
-      z-index: 1001;
-      animation: lamlight 2s linear infinite;
+      .playover{
+        background-image: url("../../assets/imgs/playover.png");
+        width: 100vw;
+        height: 50vh;
+        background-size: 100% 100%;
+        position: absolute;
+        top:10%;
+        z-index: 1002;
+        .tips{
+          position: absolute;
+          bottom: 20px;
+          left: 12%;
+          width: 76%;
+          text-align: center;
+          font-size: 20px;
+          line-height: 30px;
+          padding: 5px 20px;
+          color:#3f3d3a;
+        }
+      }
+      .ewm {
+        background-image: url("../../assets/imgs/ewm.png");
+        width: 400px;
+        height: 130px;
+        background-size: 100% 100%;
+        position: absolute;
+        z-index: 1001;
+        bottom: 10%;
+        left: 50%;
+        margin-left: -200px;
+      }
     }
-  }
-  .seeyou{
-    position: absolute;
-    height: 140px;
-    width: 280px;
-    border-radius: 0.25rem;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1100;
-    background-image: url("../../assets/imgs/seeyou.png");
-    background-size: 100%;
-    .submit{
-      width: 85px;
-      height: 30px;
-      background-image: url("../../assets/imgs/goon1.png");
-      background-size: 100% 100%;
+    .seeyou{
       position: absolute;
+      height: 140px;
+      width: 280px;
+      border-radius: 0.25rem;
       left: 50%;
-      top: 60%;
-      margin-left: -45px;
-    }
-  }
-  .userform {
-    position: absolute;
-    height: 170px;
-    width: 280px;
-    border-radius: 0.25rem;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1100;
-    background-image: url("../../assets/imgs/userinfo.png");
-    background-size: 100%;
-    .closerule{
-      position: absolute;
-      left: 10px;
-      top:10px;
-      width: 20px;
-      height: 20px;
-      background-image: url("../../assets/imgs/closerule.png");
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1100;
+      background-image: url("../../assets/imgs/seeyou.png");
       background-size: 100%;
+      .submit{
+        width: 85px;
+        height: 30px;
+        background-image: url("../../assets/imgs/goon1.png");
+        background-size: 100% 100%;
+        position: absolute;
+        left: 50%;
+        top: 60%;
+        margin-left: -45px;
+      }
     }
-    .username{
-      width: 220px;
-      height: 25px;
-      border-radius: 10px;
-      border:1px solid #000000;
-      background-color: #ffffff;
+    .userform {
       position: absolute;
+      height: 170px;
+      width: 280px;
+      border-radius: 0.25rem;
       left: 50%;
-      top: 35%;
-      margin-left: -115px;
-      padding-left: 20px;
-    }
-    .mobile{
-      width: 220px;
-      height: 25px;
-      border-radius: 10px;
-      border:1px solid #000000;
-      background-color: #ffffff;
-      position: absolute;
-      left: 50%;
-      top: 53%;
-      margin-left: -115px;
-      padding-left: 20px;
-    }
-    .submit{
-      width: 80px;
-      height: 30px;
-      background-image: url("../../assets/imgs/utjbtn.png");
-      background-size: 100% 100%;
-      position: absolute;
-      left: 30%;
-      top: 73%;
-      margin-left: -45px;
-    }
-    .jump{
-      width: 80px;
-      height: 30px;
-      background-image: url("../../assets/imgs/utgbtn.png");
-      background-size: 100% 100%;
-      position: absolute;
-      right: 15%;
-      top: 73%;
-      margin-left: -45px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1100;
+      background-image: url("../../assets/imgs/userinfo.png");
+      background-size: 100%;
+      .closerule{
+        position: absolute;
+        left: 10px;
+        top:10px;
+        width: 20px;
+        height: 20px;
+        background-image: url("../../assets/imgs/closerule.png");
+        background-size: 100%;
+      }
+      .username{
+        width: 220px;
+        height: 25px;
+        border-radius: 10px;
+        border:1px solid #000000;
+        background-color: #ffffff;
+        position: absolute;
+        left: 50%;
+        top: 35%;
+        margin-left: -115px;
+        padding-left: 20px;
+      }
+      .mobile{
+        width: 220px;
+        height: 25px;
+        border-radius: 10px;
+        border:1px solid #000000;
+        background-color: #ffffff;
+        position: absolute;
+        left: 50%;
+        top: 53%;
+        margin-left: -115px;
+        padding-left: 20px;
+      }
+      .submit{
+        width: 80px;
+        height: 30px;
+        background-image: url("../../assets/imgs/utjbtn.png");
+        background-size: 100% 100%;
+        position: absolute;
+        left: 30%;
+        top: 73%;
+        margin-left: -45px;
+      }
+      .jump{
+        width: 80px;
+        height: 30px;
+        background-image: url("../../assets/imgs/utgbtn.png");
+        background-size: 100% 100%;
+        position: absolute;
+        right: 15%;
+        top: 73%;
+        margin-left: -45px;
+      }
     }
   }
-}
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+  /* Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-a {
-  cursor: pointer;
-  text-decoration: none;
-  color: #fff;
-}
+  a {
+    cursor: pointer;
+    text-decoration: none;
+    color: #fff;
+  }
 
-a:hover {
-  color: #fff;
-}
+  a:hover {
+    color: #fff;
+  }
 
-ul {
-  list-style: none
-}
+  ul {
+    list-style: none
+  }
 
-/* Main */
+  /* Main */
 
-html, body {
-  min-height: 100%;
-}
+  html, body {
+    min-height: 100%;
+  }
 
-/* Skeleton */
+  /* Skeleton */
 
-ul.flip {
-  position: relative;
-  float: left;
-  margin: 23px 0px 0px;
-  width: 50%;
-  height: 60px;
-  font-size: 40px;
-  font-weight: bold;
-  line-height: 60px;
-}
+  ul.flip {
+    position: relative;
+    float: left;
+    margin: 23px 0px 0px;
+    width: 33%;
+    height: 60px;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 60px;
+  }
 
-ul.flip li {
-  z-index: 1;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
+  ul.flip li {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
 
-}
+  }
 
-ul.flip li:first-child {
-  z-index: 2;
-}
-
-ul.flip li a {
-  display: block;
-  height: 100%;
-}
-
-ul.flip li a div {
-  z-index: 1;
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  overflow: hidden;
-}
-
-ul.flip li a div .shadow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-}
-
-ul.flip li a div.up {
-  transform-origin: 50% 100%;
-  top: 0;
-}
-
-ul.flip li a div.up:after {
-  content: "";
-  position: absolute;
-  top: 29px;
-  left: 0;
-  z-index: 5;
-  width: 100%;
-  height: 1px;
-}
-
-ul.flip li a div.down {
-  transform-origin: 50% 0%;
-  bottom: 0;
-}
-
-ul.flip li a div div.inn {
-  position: absolute;
-  left: 0;
-  z-index: 1;
-  width: 100%;
-  height: 200%;
-  color: #fff;
-  text-align: center;
-  /*background-color: red;*/
-  background-image: url("../../assets/imgs/sb-bg.png");
-  background-size: 100% 100%;
-}
-
-ul.flip li a div.up div.inn {
-  top: 0;
-
-}
-
-ul.flip li a div.down div.inn {
-  bottom: 0;
-}
-
-/* PLAY */
-
-div.play ul li.before {
-  z-index: 3;
-}
-
-div.play ul li.active {
-  animation: asd .3s .3s linear both;
-  z-index: 2;
-}
-
-@keyframes asd {
-  0% {
+  ul.flip li:first-child {
     z-index: 2;
   }
-  5% {
-    z-index: 4;
-  }
-  100% {
-    z-index: 4;
-  }
-}
 
-div.play ul li.active .down {
-  z-index: 2;
-  animation: turn .3s .3s linear both;
-}
+  ul.flip li a {
+    display: block;
+    height: 100%;
+  }
 
-@keyframes turn {
-  0% {
-    transform: rotateX(90deg);
+  ul.flip li a div {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    overflow: hidden;
   }
-  100% {
-    transform: rotateX(0deg);
-  }
-}
 
-div.play ul li.before .up {
-  z-index: 2;
-  animation: turn2 .3s linear both;
-}
+  ul.flip li a div .shadow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+  }
 
-@keyframes turn2 {
-  0% {
-    transform: rotateX(0deg);
+  ul.flip li a div.up {
+    transform-origin: 50% 100%;
+    top: 0;
   }
-  100% {
-    transform: rotateX(-90deg);
-  }
-}
 
-@keyframes show {
-  0% {
-    opacity: 0;
+  ul.flip li a div.up:after {
+    content: "";
+    position: absolute;
+    top: 29px;
+    left: 0;
+    z-index: 5;
+    width: 100%;
+    height: 1px;
   }
-  100% {
-    opacity: 1;
-  }
-}
 
-@keyframes hide {
-  0% {
-    opacity: 1;
+  ul.flip li a div.down {
+    transform-origin: 50% 0%;
+    bottom: 0;
   }
-  100% {
-    opacity: 0;
-  }
-}
 
-.football_field {
+  ul.flip li a div div.inn {
+    position: absolute;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 200%;
+    color: #fff;
+    text-align: center;
+    /*background-color: red;*/
+    background-image: url("../../assets/imgs/sb-bg.png");
+    background-size: 100% 100%;
+  }
+
+  ul.flip li a div.up div.inn {
+    top: 0;
+
+  }
+
+  ul.flip li a div.down div.inn {
+    bottom: 0;
+  }
+
+  /* PLAY */
+
+  div.play ul li.before {
+    z-index: 3;
+  }
+
+  div.play ul li.active {
+    animation: asd .3s .3s linear both;
+    z-index: 2;
+  }
+
+  @keyframes asd {
+    0% {
+      z-index: 2;
+    }
+    5% {
+      z-index: 4;
+    }
+    100% {
+      z-index: 4;
+    }
+  }
+
+  div.play ul li.active .down {
+    z-index: 2;
+    animation: turn .3s .3s linear both;
+  }
+
+  @keyframes turn {
+    0% {
+      transform: rotateX(90deg);
+    }
+    100% {
+      transform: rotateX(0deg);
+    }
+  }
+
+  div.play ul li.before .up {
+    z-index: 2;
+    animation: turn2 .3s linear both;
+  }
+
+  @keyframes turn2 {
+    0% {
+      transform: rotateX(0deg);
+    }
+    100% {
+      transform: rotateX(-90deg);
+    }
+  }
+
+  @keyframes show {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes hide {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .football_field {
     position: absolute;
     bottom: 0;
     width: 100vw;
@@ -1314,6 +1350,27 @@ div.play ul li.before .up {
       transition: all 150ms linear;
     }
 
+    .finger-tip {
+      background-image: url("../../assets/imgs/play/finger.png");
+      background-size: 100% 100%;
+      transform-origin: center;
+      width: 25vw;
+      height: 25vw;
+      position: absolute;
+      left: calc(50% - 12.5vw);
+      bottom: 15.5vw;
+      z-index: 2;
+    }
+
+    .finger-ani {
+      // animation: flytip 1s linear;
+      animation-name: flytip;
+      animation-duration: 1s;
+      animation-iteration-count: 2;
+      animation-fill-mode: forwards;
+      // animation: flytip 2s linear 1 alternate forwards;
+    }
+
     .soccer-virturl {
       // background-color: red;
       width: 30vw;
@@ -1351,7 +1408,8 @@ div.play ul li.before .up {
       animation: bounceIn 0.3s linear 1 alternate forwards;
     }
     .sounds-area {
-      display: none;
+      // display: none;
+      // opacity: 0;
     }
   }
 
@@ -1372,49 +1430,133 @@ div.play ul li.before .up {
       transform: rotateZ(-360deg);
     }
   }
-@keyframes lamlight {
-  0% {
-    opacity: 0.3;
+  @keyframes lamlight {
+    0% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 0.3;
+    }
   }
-  50% {
-    opacity: 0.6;
-  }
-  100% {
-    opacity: 0.3;
-  }
-}
 
-@keyframes bounceIn{
-  from, 20%, 40%, 60%, 80%, to {
-    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  @keyframes bounceIn{
+    from, 20%, 40%, 60%, 80%, to {
+      -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+      animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    }
+    0% {
+      opacity: 0;
+      -webkit-transform: scale3d(.3, .3, .3);
+      transform: scale3d(.3, .3, .3);
+    }
+    20% {
+      -webkit-transform: scale3d(1.1, 1.1, 1.1);
+      transform: scale3d(1.1, 1.1, 1.1);
+    }
+    40% {
+      -webkit-transform: scale3d(.9, .9, .9);
+      transform: scale3d(.9, .9, .9);
+    }
+    60% {
+      opacity: 1;
+      -webkit-transform: scale3d(1.03, 1.03, 1.03);
+      transform: scale3d(1.03, 1.03, 1.03);
+    }
+    80% {
+      -webkit-transform: scale3d(.97, .97, .97);
+      transform: scale3d(.97, .97, .97);
+    }
+    to {
+      opacity: 1;
+      -webkit-transform: scale3d(1, 1, 1);
+      transform: scale3d(1, 1, 1);
+    }
   }
-  0% {
-    opacity: 0;
-    -webkit-transform: scale3d(.3, .3, .3);
-    transform: scale3d(.3, .3, .3);
+
+  @keyframes flytip{
+    0% {
+      bottom: 16vw;
+      opacity: 0.7;
+    }
+
+    75% {
+      bottom: 40vw;
+      opacity: 0.5;
+    }
+
+    100% {
+      bottom: 40vw;
+      opacity: 0;
+    }
   }
-  20% {
-    -webkit-transform: scale3d(1.1, 1.1, 1.1);
-    transform: scale3d(1.1, 1.1, 1.1);
+  @keyframes move
+  {
+    0%, 25%{
+      -webkit-transform:rotate(0deg);
+      transform:rotate(0deg);
+    }
+    30% {
+      -webkit-transform:rotate(6deg);
+      transform:rotate(6deg);
+    }
+    35% {
+      -webkit-transform:rotate(-6deg);
+      transform:rotate(-6deg);
+    }
+    40% {
+      -webkit-transform:rotate(6deg);
+      transform:rotate(6deg);
+    }
+    45% {
+      -webkit-transform:rotate(-6deg);
+      transform:rotate(-6deg);
+    }
+    50% {
+      -webkit-transform:rotate(6deg);
+      transform:rotate(6deg);
+    }
+    55% {
+      -webkit-transform:rotate(-6deg);
+      transform:rotate(-6deg);
+    }
+    60% {
+      -webkit-transform:rotate(6deg);
+      transform:rotate(6deg);
+    }
+    65% {
+      -webkit-transform:rotate(-6deg);
+      transform:rotate(-6deg);
+    }
+    70% {
+      -webkit-transform:rotate(6deg);
+      transform:rotate(6deg);
+    }
+    75% {
+      -webkit-transform:rotate(-6deg);
+      transform:rotate(-6deg);
+    }
+    80% {
+      -webkit-transform:rotate(6deg);
+      transform:rotate(6deg);
+    }
+    85% {
+      -webkit-transform:rotate(-6deg);
+      transform:rotate(-6deg);
+    }
+    90% {
+      -webkit-transform:rotate(6deg);
+      transform:rotate(6deg);
+    }
+    95% {
+      -webkit-transform:rotate(-6deg);
+      transform:rotate(-6deg);
+    }
+    100% {
+      -webkit-transform:rotate(0deg);
+      transform:rotate(0deg);
+    }
   }
-  40% {
-    -webkit-transform: scale3d(.9, .9, .9);
-    transform: scale3d(.9, .9, .9);
-  }
-  60% {
-    opacity: 1;
-    -webkit-transform: scale3d(1.03, 1.03, 1.03);
-    transform: scale3d(1.03, 1.03, 1.03);
-  }
-  80% {
-    -webkit-transform: scale3d(.97, .97, .97);
-    transform: scale3d(.97, .97, .97);
-  }
-  to {
-    opacity: 1;
-    -webkit-transform: scale3d(1, 1, 1);
-    transform: scale3d(1, 1, 1);
-  }
-}
 </style>
