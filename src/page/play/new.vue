@@ -1,7 +1,7 @@
 <template>
   <div class="play-page">
     <div class="next" @click="tobill"></div>
-    <!--    <div @click="showbill"></div>-->
+    <div v-if="playover" class="showrank" @click="showrank"></div>
     <div class="lawn">
       <!--      <div class="goal"></div>-->
       <div class="scoreboard">
@@ -105,6 +105,39 @@
         </div>
       </div>
     </section>
+    <!--查看助力榜-->
+    <div v-show="popup4">
+      <div class="zlrank">
+        <div class="closerule" @click="closepopup"></div>
+        <div class="vantRow">
+          <div class="col1">
+            <div>8</div>
+          </div>
+          <div class="col2">span: 8</div>
+          <div class="col3">span: 8</div>
+          <div class="col4">
+            <div>99999</div>
+          </div>
+        </div>
+        <div class="vantRow thvant">
+          <div class="col1">名次</div>
+          <div class="col2">昵 称</div>
+          <div class="col3">手机号</div>
+          <div class="col4">分数</div>
+        </div>
+        <div class="vantRow">
+          <div class="col1">
+            <div>8</div>
+          </div>
+          <div class="col2">span: 8</div>
+          <div class="col3">span: 8</div>
+          <div class="col4">
+            <div>99999</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--助力完成-->
     <div class="bg4" v-if="playover">
       <div class="ewm"></div>
       <div class="playover">
@@ -129,11 +162,10 @@
     <div v-show="popup2">
       <!--这里是要展示的内容层-->
       <div class="userform">
-        <div class="closerule" @click="tobill"></div>
-        <div><input v-model="username" class="username" placeholder="姓 名" /></div>
+        <div class="closerule" @click="closepopup"></div>
+        <div><input v-model="username" class="username" placeholder="昵 称" /></div>
         <div><input v-model="mobile" class="mobile" placeholder="电 话" type="number" /></div>
         <div class="submit" @click="submit"></div>
-        <div class="jump" @click="tobill"></div>
       </div>
       <!--这里是半透明背景层-->
       <div class="over"></div>
@@ -185,6 +217,7 @@ export default {
       popup1: 0,
       popup2: 0,
       popup3: 0,
+      popup4: 1,
       roleId: -1,
       userId: -1,
       roleName: '梅西',
@@ -241,8 +274,12 @@ export default {
       this.popup1 = 0
       this.popup2 = 0
       this.popup3 = 0
+      this.popup4 = 0
       this.myscore = 0
       this.smallnum = 10
+    },
+    showrank () {
+      this.popup4 = 1
     },
     // 打开海报
     tobill () {
@@ -807,6 +844,89 @@ export default {
     background-image: url("../../assets/imgs/bg3.jpg");
     background-size: 100% 100%;
     position: relative;
+    .zlrank{
+      width: 300px;
+      height: 500px;
+      background-image: url("../../assets/imgs/zlrankbg.png");
+      background-size: 100% 100%;
+      position: absolute;
+      top:10%;
+      left:50%;
+      margin-left: -150px;
+      z-index: 1110;
+      padding-top: 40px;
+      overflow: scroll;
+      .closerule{
+        position: absolute;
+        left: 10px;
+        top:10px;
+        width: 20px;
+        height: 20px;
+        background-image: url("../../assets/imgs/closerule.png");
+        background-size: 100%;
+      }
+      .vantRow{
+        margin: 0 7px 7px;
+        display: block;
+        width: 280px;
+        font-size: 15px;
+        height: 28px;
+        border: 1px solid #686868;
+        background-color: #d0d0d0;
+        padding: 3px;
+        border-radius: 4px;
+        .col1{
+          width: 13%;
+          display: block;
+          float:left;
+          div{
+            text-align: center;
+            line-height: 20px;
+            width: 20px;
+            height: 20px;
+            background-color: #636363;
+            border-radius: 5px;
+          }
+        }
+        .col2{
+          width: 25%;
+          display: block;
+          float:left;
+        }
+        .col3{
+          width: 36%;
+          display: block;
+          float:left;
+        }
+        .col4{
+          width: 26%;
+          display: block;
+          float:left;
+          div{
+            background-color: #6d6d6d;
+            text-align: center;
+            line-height: 20px;
+            width: 70px;
+            height: 20px;
+            border-radius: 5px;
+          }
+        }
+      }
+      .thvant{
+        background: none;
+        border: 0;
+      }
+    }
+    .showrank{
+      width: 79px;
+      height: 32px;
+      background-image: url("../../assets/imgs/zlbbtn.png");
+      background-size: 100% 100%;
+      position: absolute;
+      top:22px;
+      left:20px;
+      z-index: 1010;
+    }
     .next{
       width: 75px;
       height: 35px;
@@ -986,14 +1106,14 @@ export default {
       }
       .ewm {
         background-image: url("../../assets/imgs/ewm.png");
-        width: 400px;
+        width: 240px;
         height: 130px;
         background-size: 100% 100%;
         position: absolute;
         z-index: 1001;
-        bottom: 10%;
+        bottom: 8%;
         left: 50%;
-        margin-left: -200px;
+        margin-left: -120px;
       }
     }
     .seeyou{
@@ -1020,8 +1140,8 @@ export default {
     }
     .userform {
       position: absolute;
-      height: 170px;
-      width: 280px;
+      height: 209px;
+      width: 250px;
       border-radius: 0.25rem;
       left: 50%;
       top: 50%;
@@ -1039,48 +1159,38 @@ export default {
         background-size: 100%;
       }
       .username{
-        width: 220px;
-        height: 25px;
+        width: 200px;
+        height: 30px;
         border-radius: 10px;
         border:1px solid #000000;
         background-color: #ffffff;
         position: absolute;
         left: 50%;
-        top: 35%;
-        margin-left: -115px;
+        top: 42%;
+        margin-left: -105px;
         padding-left: 20px;
       }
       .mobile{
-        width: 220px;
-        height: 25px;
+        width: 200px;
+        height: 30px;
         border-radius: 10px;
         border:1px solid #000000;
         background-color: #ffffff;
         position: absolute;
         left: 50%;
-        top: 53%;
-        margin-left: -115px;
+        top: 60%;
+        margin-left: -105px;
         padding-left: 20px;
       }
       .submit{
         width: 80px;
-        height: 30px;
+        height: 33px;
         background-image: url("../../assets/imgs/utjbtn.png");
         background-size: 100% 100%;
         position: absolute;
-        left: 30%;
-        top: 73%;
-        margin-left: -45px;
-      }
-      .jump{
-        width: 80px;
-        height: 30px;
-        background-image: url("../../assets/imgs/utgbtn.png");
-        background-size: 100% 100%;
-        position: absolute;
-        right: 15%;
-        top: 73%;
-        margin-left: -45px;
+        left: 50%;
+        top: 80%;
+        margin-left: -40px;
       }
     }
   }
