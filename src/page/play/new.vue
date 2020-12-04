@@ -113,10 +113,10 @@
           <div class="col1">
             <div>8</div>
           </div>
-          <div class="col2">span: 8</div>
-          <div class="col3">span: 8</div>
+          <div class="col2">{{userInfo.userName?userInfo.userName:'--'}}</div>
+          <div class="col3">{{userInfo.mobile}}</div>
           <div class="col4">
-            <div>99999</div>
+            <div>{{userInfo.userScore}}</div>
           </div>
         </div>
         <div class="vantRow thvant">
@@ -125,14 +125,14 @@
           <div class="col3">手机号</div>
           <div class="col4">分数</div>
         </div>
-        <div class="vantRow">
+        <div class="vantRow" v-for="item in rankList">
           <div class="col1">
-            <div>8</div>
+            <div>{{item.userOrder}}</div>
           </div>
-          <div class="col2">span: 8</div>
-          <div class="col3">span: 8</div>
+          <div class="col2">{{item.userName?item.userName:'--'}}</div>
+          <div class="col3">{{item.mobile}}</div>
           <div class="col4">
-            <div>99999</div>
+            <div>{{item.score}}</div>
           </div>
         </div>
       </div>
@@ -217,13 +217,15 @@ export default {
       popup1: 0,
       popup2: 0,
       popup3: 0,
-      popup4: 1,
+      popup4: 0,
       roleId: -1,
       userId: -1,
       roleName: '梅西',
       username: '',
       mobile: '',
       todayPyayCount: 0,
+      userInfo: [],
+      rankList: [],
 
       timer: null,
       angel: '0',
@@ -280,6 +282,25 @@ export default {
     },
     showrank () {
       this.popup4 = 1
+      axios({
+        // url: '/api/user/add',
+        url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Ranklist',
+        method: 'post',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        data: 'userId=' + this.userId
+      }).then(res => {
+        if (res.data.code === '1') {
+          console.log(res.data)
+          this.userInfo = res.data.data.userInfo
+          this.rankList = res.data.data.rankList
+        } else {
+          Dialog.alert({
+            message: res.data.msg
+          }).then(() => {
+            // on close
+          })
+        }
+      })
     },
     // 打开海报
     tobill () {
