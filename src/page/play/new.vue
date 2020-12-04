@@ -59,8 +59,8 @@
     <div v-show="popup">
       <!--这里是要展示的内容层-->
       <div class="win">
-<!--        <div class="closerule" @click="closepopup"></div>-->
-<!--        <div class="submit" @click="closepopup"></div>-->
+        <!--        <div class="closerule" @click="closepopup"></div>-->
+        <!--        <div class="submit" @click="closepopup"></div>-->
       </div>
       <!--这里是半透明背景层-->
       <div class="over"></div>
@@ -111,7 +111,7 @@
         <div class="closerule" @click="closepopup"></div>
         <div class="vantRow">
           <div class="col1">
-            <div>8</div>
+            <div>--</div>
           </div>
           <div class="col2">{{userInfo.userName?userInfo.userName:'--'}}</div>
           <div class="col3">{{userInfo.mobile}}</div>
@@ -119,22 +119,29 @@
             <div>{{userInfo.userScore}}</div>
           </div>
         </div>
+
         <div class="vantRow thvant">
           <div class="col1">名次</div>
           <div class="col2">昵 称</div>
           <div class="col3">手机号</div>
           <div class="col4">分数</div>
         </div>
-        <div class="vantRow" v-for="item in rankList">
-          <div class="col1">
-            <div>{{item.userOrder}}</div>
+        <section class="rank-list-area">
+          <div class="rank-list-wraper">
+            <div class="vantRow" v-for="(item, index) in rankList" :key="item.userOrder">
+              <div class="col1">
+                <div :style="`background-color: ${ index === 0 ? '#ff9900': index === 1 ? '#a59d92': index ===2 ? '#b7868b': '#636363'}`">{{item.userOrder}}</div>
+              </div>
+              <div class="col2">{{item.userName?item.userName:'--'}}</div>
+              <div class="col3">{{item.mobile}}</div>
+              <div class="col4">
+                <div>{{item.score}}</div>
+              </div>
+            </div>
           </div>
-          <div class="col2">{{item.userName?item.userName:'--'}}</div>
-          <div class="col3">{{item.mobile}}</div>
-          <div class="col4">
-            <div>{{item.score}}</div>
-          </div>
-        </div>
+
+        </section>
+
       </div>
     </div>
     <!--助力完成-->
@@ -190,583 +197,109 @@
   </div>
 </template>
 <script>
-import bezier from '@/utils/bezier'
-import axios from 'axios'
-import {
-  analysis,
-  generate,
-  getAreaPointByPos,
-  getOuterPointByPos,
-  randomNum,
-  toInt
-} from '@/utils/index'
-import { Dialog } from 'vant'
-const actualwidth = document.body.clientWidth
-const actualheight = document.body.clientHeight
+  import bezier from '@/utils/bezier'
+  import axios from 'axios'
+  import {
+    analysis,
+    generate,
+    getAreaPointByPos,
+    getOuterPointByPos,
+    randomNum,
+    toInt
+  } from '@/utils/index'
+  import { Dialog } from 'vant'
+  const actualwidth = document.body.clientWidth
+  const actualheight = document.body.clientHeight
 
-export default {
-  name: 'clock',
-  data () {
-    return {
-      activeNum: [0, 0, 0],
-      isPlay: false,
-      // 每次玩10局
-      smallnum: 10,
-      playover: false,
-      popup: 0,
-      popup1: 0,
-      popup2: 0,
-      popup3: 0,
-      popup4: 0,
-      roleId: -1,
-      userId: -1,
-      roleName: '梅西',
-      username: '',
-      mobile: '',
-      todayPyayCount: 0,
-      userInfo: [],
-      rankList: [],
+  export default {
+    name: 'clock',
+    data () {
+      return {
+        activeNum: [0, 0, 0],
+        isPlay: false,
+        // 每次玩10局
+        smallnum: 10,
+        playover: false,
+        popup: 0,
+        popup1: 0,
+        popup2: 0,
+        popup3: 0,
+        popup4: 0,
+        roleId: -1,
+        userId: -1,
+        roleName: '梅西',
+        username: '',
+        mobile: '',
+        todayPyayCount: 0,
+        userInfo: [],
+        rankList: [],
 
-      timer: null,
-      angel: '0',
-      liliang: 0,
-      // 直径
-      diameter: 0,
+        timer: null,
+        angel: '0',
+        liliang: 0,
+        // 直径
+        diameter: 0,
 
-      // 足球初始位置点
-      initialPosX: 0,
-      initialPosY: 0,
+        // 足球初始位置点
+        initialPosX: 0,
+        initialPosY: 0,
 
-      goalLT: [0, 0],
-      goalLB: [0, 0],
-      goalRT: [0, 0],
-      goalRB: [0, 0],
+        goalLT: [0, 0],
+        goalLB: [0, 0],
+        goalRT: [0, 0],
+        goalRB: [0, 0],
 
-      // 门框宽高，底部距离
-      goalwidth: 0,
-      goalheight: 0,
-      goalbottom: 0,
-      myscore: 0,
-      index: 0,
-      isRotate: false,
-      isHit: false,
-      isEnd: false,
-      isShowScore: true,
-      isSwiper: true,
-      showTip: false
-    }
-  },
-  props: {
-    args: {
-      type: Object,
-      default () {
-        return {
-          roleId: -1,
-          userId: -1,
-          todayPyayCount: 11
-        }
+        // 门框宽高，底部距离
+        goalwidth: 0,
+        goalheight: 0,
+        goalbottom: 0,
+        myscore: 0,
+        index: 0,
+        isRotate: false,
+        isHit: false,
+        isEnd: false,
+        isShowScore: true,
+        isSwiper: true,
+        showTip: false
       }
-    }
-  },
-  methods: {
-    // 关闭活动规则页面
-    closepopup () {
-      this.playover = false
-      this.popup = 0
-      this.popup1 = 0
-      this.popup2 = 0
-      this.popup3 = 0
-      this.popup4 = 0
-      this.myscore = 0
-      this.smallnum = 10
     },
-    showrank () {
-      this.popup4 = 1
-      axios({
-        // url: '/api/user/add',
-        url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Ranklist',
-        method: 'post',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        data: 'userId=' + this.userId
-      }).then(res => {
-        if (res.data.code === '1') {
-          console.log(res.data)
-          this.userInfo = res.data.data.userInfo
-          this.rankList = res.data.data.rankList
-        } else {
-          Dialog.alert({
-            message: res.data.msg
-          }).then(() => {
-            // on close
-          })
-        }
-      })
-    },
-    // 打开海报
-    tobill () {
-      this.popup2 = 0
-      this.playover = false
-      this.$emit('tobill')
-    },
-    handleClickReturnPrevPage () {
-      this.$emit('touchable', true)
-    },
-    showHitEffect (state) {
-      this.isEnd = true
-      this.isHit = state
-      setTimeout(() => {
-        this.isHit = false
-        this.isEnd = false
-      }, 1000)
-    },
-    handleSwipe (evt) {
-      console.log(evt)
-
-      if (evt.angle > 20 || evt.angle < -160) return
-      if (!this.isSwiper) return
-      this.isSwiper = false
-
-      const initPox = [this.initialPosX, this.initialPosY]
-      let target = [60, 200]
-
-      // 通过这个分析方法，得出力量值跟方向
-      // 此时应该知道得分和命中情况，
-      const opt = analysis(evt)
-      // 此方法会计算出得分情况及击中与否，位置等信息
-      const res = generate(opt, this.myscore)
-      // this.angel = res.posititon
-      console.log(this.myscore)
-      const { posititon, hit } = res
-
-      // const hit = 2
-      if (posititon >= 1 && posititon <= 6) {
-        if (hit !== 2) {
-          target = getAreaPointByPos(
-            actualwidth,
-            this.goalwidth,
-            this.goalheight,
-            this.goalbottom,
-            posititon
-          )
-        } else {
-          // 弹出位置模拟，这里只有一些，足够
-          if (posititon === 1 || posititon === 2) {
-            target = [
-              actualwidth * 0.5 - this.goalwidth * 0.5,
-              randomNum(this.goalbottom, this.goalbottom + this.goalheight)
-            ]
-          } else if (posititon === 3) {
-            target = [
-              randomNum(
-                actualwidth * 0.5 - this.goalwidth * 0.5,
-                actualwidth * 0.5 + this.goalwidth * 0.5
-              ),
-              this.goalbottom + this.goalheight
-            ]
-          } else if (posititon === 5 || posititon === 6) {
-            target = [
-              actualwidth * 0.5 + this.goalwidth * 0.5,
-              randomNum(this.goalbottom, this.goalbottom + this.goalheight)
-            ]
-          } else {
-            target = getAreaPointByPos(
-              actualwidth,
-              this.goalwidth,
-              this.goalheight,
-              this.goalbottom,
-              posititon
-            )
+    props: {
+      args: {
+        type: Object,
+        default () {
+          return {
+            roleId: -1,
+            userId: -1,
+            todayPyayCount: 11
           }
         }
-      } else {
-        target = getOuterPointByPos(
-          actualwidth,
-          this.goalwidth,
-          this.goalheight,
-          this.goalbottom,
-          opt.angle,
-          opt.strength,
-          this.initialPosX,
-          this.initialPosY,
-          posititon
-        )
-      }
-
-      // 连个控制点
-      const c1 = toInt([
-        initPox[0] + (target[0] - initPox[0]) * 0.33,
-        target[1] + 40
-      ])
-      const c2 = toInt([
-        initPox[0] + (target[0] - initPox[0]) * 0.66,
-        target[1] + 60
-      ])
-
-      // console.log(initPox, c1, c2, target)
-      if (this.$refs.soccer) {
-        this.animation(
-          bezier.getBezierPoints(10, initPox, c1, c2, target),
-          res
-        )
       }
     },
-    animation (points, data) {
-      this.isRotate = true
-      const len = points.length
-      console.log(len)
-      let index = 0
-      let size = 1
-      const time = 25
-      const soccer = this.$refs.soccer
-
-      // 踢球开始
-      this.triggerStart(data)
-      this.playSound(3)
-      this.timer = setInterval(() => {
-        if (index > len - 1) {
-          clearInterval(this.timer)
-          // soccer.classList.remove('soccer-ani')
-
-          const { hit, posititon } = data
-          const point = points[points.length - 1]
-          // const hit = 1
-          if (hit === 1) {
-            // 弧形动画结束，模拟扑出动画
-            this.showGlove(point, posititon)
-            this.triggerEnd(data)
-            this.playSound(2)
-          } else if (hit === 2) {
-            // 弧形动画结束，模拟门框弹出动画
-            this.frameAni(point, data, size)
-            this.playSound(2)
-          } else {
-            this.triggerEnd(data)
-            if (hit === -1) {
-              this.playSound(2)
-            } else {
-              this.playSound(1)
-              this.putoutAni(point, data, size)
-            }
-          }
-          this.showHitEffect(hit === 0)
-
-          return
-        }
-        // if (!soccer.classList.contains('soccer-ani')) {
-        //   // soccer.classList.add('soccer-ani')
-        // }
-
-        soccer.style.transform = `translate(${this.diameter * -0.5 + points[index][0]}px, ${
-          this.diameter * 0.5 - points[index][1]
-        }px) scale(${size})`
-
-        index++
-
-        if (size >= 0.26) size -= 0.08
-      }, time)
-
-      // 阴影控制
-      const shader = this.$refs.shader
-      shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 40}px`
-      shader.style.left = `${this.initialPosX - 10}px`
-      shader.style.transform = 'translateX(-50%) scaleX(0)'
-      shader.style.opacity = 0
-      shader.style.transition = 'all 160ms linear'
-    },
-    handleReset () {
-      this.isSwiper = true
-      const soccer = this.$refs.soccer
-      soccer.style.display = 'block'
-      soccer.style.transform = `translate(${this.diameter * -0.5 + this.initialPosX}px, ${
-        this.diameter * 0.5 - this.initialPosY
-      }px) scale(1)`
-
-      soccer.style.left = '0px'
-      soccer.style.bottom = '0px'
-
-      const shader = this.$refs.shader
-      shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 10}px`
-      shader.style.left = `${this.initialPosX - 10}px`
-      shader.style.opacity = 1
-      shader.style.transform = 'translateX(-50%) scaleX(1)'
-      shader.style.transition = 'all 0ms linear'
-      console.log('reset')
-    },
-    putoutAni (point, data, size) {
-      // 扑出动画
-      let timer = null
-
-      let _bottomPos = []
-
-      // let _low = false
-      // if (point[1] - this.goalbottom < 50) _low = false
-      // else _low = true
-
-      _bottomPos = toInt([
-        randomNum(
-          point[0] + this.goalwidth * -0.05,
-          point[0] + this.goalwidth * 0.05
-        ),
-        this.goalbottom + 5
-      ])
-      console.log(point, this.goalbottom, _bottomPos)
-      const _cpos = toInt([
-        (_bottomPos[0] + point[0]) * 0.5,
-        point[1] + randomNum(-5, 5)
-      ])
-      const _step =
-        Math.round(((point[1] - _bottomPos[1]) / this.goalheight) * 6) + 3
-      console.log(`_step -- ${_step}`)
-      const _points = bezier.getBezierPoints(_step, point, _cpos, _bottomPos)
-      const len = _points.length
-
-      const time = 30
-      const soccer = this.$refs.soccer
-      let index = 0
-
-      timer = setInterval(() => {
-        if (index > len - 1) {
-          clearInterval(timer)
-          // this.triggerEnd(data)
-          return
-        }
-
-        soccer.style.transform = `translate(${this.diameter * -0.5 + _points[index][0]}px, ${
-          this.diameter * 0.5 - _points[index][1]
-        }px) scale(${size})`
-        index++
-      }, time)
-    },
-    frameAni (point, data, size) {
-      // 弹框动画
-
-      let timer = null
-
-      let _bottomPos = []
-
-      const { posititon } = data
-
-      if (posititon === 1 || posititon === 2) {
-        _bottomPos = toInt([
-          randomNum(
-            point[0] - this.goalwidth * 0.2,
-            point[0] - this.goalwidth * 0.4
-          ),
-          point[1] + randomNum(10, 30)
-        ])
-      } else if (posititon === 3) {
-        _bottomPos = toInt([
-          randomNum(
-            actualwidth * 0.5 - this.goalwidth * 0.2,
-            actualwidth * 0.5 + this.goalwidth * 0.2
-          ),
-          this.goalbottom + this.goalheight + randomNum(30, 70)
-        ])
-      } else if (posititon === 5 || posititon === 6) {
-        _bottomPos = toInt([
-          randomNum(
-            point[0] + this.goalwidth * 0.2,
-            point[0] + this.goalwidth * 0.4
-          ),
-          point[1] + randomNum(10, 30)
-        ])
-      }
-
-      console.log(point, this.goalbottom, _bottomPos)
-      const _cpos = toInt([
-        (_bottomPos[0] + point[0]) * 0.5,
-        point[1] + randomNum(-7, 10)
-      ])
-
-      const _points = bezier.getBezierPoints(6, point, _cpos, _bottomPos)
-      const len = _points.length
-
-      const time = 25
-      const soccer = this.$refs.soccer
-      let index = 0
-
-      timer = setInterval(() => {
-        if (index > len - 1) {
-          clearInterval(timer)
-          soccer.style.display = 'none'
-          this.triggerEnd(data)
-          return
-        }
-
-        soccer.style.transform = `translate(${this.diameter * -0.5 + _points[index][0]}px, ${
-          this.diameter * 0.5 - _points[index][1]
-        }px) scale(${size})`
-        index++
-      }, time)
-    },
-
-    showGlove (position, area) {
-      const glove = this.$refs.glove
-      glove.style.display = 'block'
-      glove.style.width = `${this.diameter}px`
-      glove.style.height = `${this.diameter}px`
-      let rotate = 0
-      if (area === 1 || area === 2) { rotate = -45 } else if (area === 3 || area === 4) { rotate = 0 } else if (area === 5 || area === 6) { rotate = 45 }
-      glove.style.transform = `translate(${this.diameter * -0.5 + position[0]}px, ${
-        this.diameter * 0.5 - position[1]}px) scale(0.35) rotate(${rotate}deg)`
-      setTimeout(() => {
-        glove.style.display = 'none'
-      }, 1200)
-    },
-    // 滑动成绩触发,
-    // 滑动动画开始
-    // 此时已有得分，位置，等信息
-    triggerStart (data) {},
-    // 加分
-    addScore (num) {
-      const s = parseInt(num / 10 % 10)
-      const g = num % 10
-      this.activeNum = [0, s, g]
-      this.isPlay = false
-      this.isPlay = true
-      this.smallnum--
-    },
-    // 足球动画结束,
-    // 滑动动画开始
-    // 得分，位置，等信息同上
-    triggerEnd (data) {
-      console.log(data)
-      this.isRotate = false
-
-      this.myscore += data.score
-      this.index++
-      this.addScore(this.myscore)
-      // if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 11) {
-      //   // 将踢球分数传给接口
-      //   this.postScore()
-      // } else {
-      //   this.addScore(this.myscore)
-      // }
-      setTimeout(() => {
-        this.handleReset()
-        if (this.smallnum === 0) {
-          // 重玩助力
-          this.popup1 = 1
-          // if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 1) {
-          //   this.popup1 = 1
-          //   // 将踢球分数传给接口
-          //   // this.postScore()
-          // }
-        }
-      }, 1000)
-    },
-    reset () {
-      this.playover = false
-      this.popup1 = 0
-      this.myscore = 0
-      this.smallnum = 11
-      this.addScore(0)
-    },
-    // 将踢球分数传给后台
-    postScore () {
-      axios({
-        // url: '/api/score/add',
-        url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Scoresubmit',
-        method: 'post',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        data: 'roleId=' + this.roleId + '&' + 'userId=' + this.userId + '&' + 'score=' + this.myscore
-      }).then(res => {
+    methods: {
+      // 关闭活动规则页面
+      closepopup () {
+        this.playover = false
+        this.popup = 0
         this.popup1 = 0
-        if (res.data.code === '1') {
-          // 记分牌累计分数
-          // this.addScore(this.myscore)
-          if (res.data.isWin === 1) {
-            this.popup = 1
-            setTimeout(() => {
-              this.popup = 0
-              this.playover = true
-            }, 6000)
-          } else {
-            // 游戏结束
-            this.playover = true
-          }
-        } else {
-          Dialog.alert({
-            message: res.data.msg
-          }).then(() => {
-            // on close
-          })
-        }
-      })
-    },
-    playSound (state) {
-      const success = this.$refs.success
-      const fail = this.$refs.fail
-      const hit = this.$refs.hit
-
-      switch (state) {
-        case 1:
-          if (typeof WeixinJSBridge === 'object' && typeof WeixinJSBridge.invoke === 'function') { // IOS
-            WeixinJSBridge.invoke('getNetworkType', {}, function (res) {
-              success.play()
-              // alert(hit)
-            })
-          } else { // Android
-            success.play()
-          }
-          break
-        case 2:
-          if (typeof WeixinJSBridge === 'object' && typeof WeixinJSBridge.invoke === 'function') { // IOS
-            WeixinJSBridge.invoke('getNetworkType', {}, function (res) {
-              fail.play()
-              // alert(hit)
-            })
-          } else { // Android
-            fail.play()
-          }
-          break
-        case 3:
-          if (typeof WeixinJSBridge === 'object' && typeof WeixinJSBridge.invoke === 'function') { // IOS
-            WeixinJSBridge.invoke('getNetworkType', {}, function (res) {
-              hit.play()
-              // alert(hit)
-            })
-          } else { // Android
-            hit.play()
-          }
-          break
-      }
-    },
-    // 提交用户信息
-    submit () {
-      if (this.mobile === '') {
-        Dialog.alert({
-          message: '请填写手机号～'
-        }).then(() => {
-          // on close
-        })
-      } else {
+        this.popup2 = 0
+        this.popup3 = 0
+        this.popup4 = 0
+        this.myscore = 0
+        this.smallnum = 10
+      },
+      showrank () {
+        this.popup4 = 1
         axios({
           // url: '/api/user/add',
-          url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Usersubmit',
+          url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Ranklist',
           method: 'post',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          data: 'mobile=' + this.mobile + '&' + 'sex=' + '1' + '&' + 'userName=' + this.username
+          data: 'userId=' + this.userId
         }).then(res => {
           if (res.data.code === '1') {
-            this.popup2 = 0
-            this.todayPyayCount = res.data.data.isTodayPyayCount
-            if (this.todayPyayCount >= 1) {
-              // 今日已提交，明天再来
-              this.popup = 0
-              this.popup3 = 1
-            } else if (this.todayPyayCount >= 0 && this.todayPyayCount < 1) {
-              this.userId = res.data.data.tbUser.userId
-              this.popup = 0
-              this.postScore()
-              // this.$emit('toplay', 1, {
-              //   roleId: this.roleId,
-              //   userId: this.userId,
-              //   todayPyayCount: this.todayPyayCount
-              // })
-            }
-            this.mobile = ''
-            this.username = ''
+            console.log(res.data)
+            this.userInfo = res.data.data.userInfo
+            this.rankList = res.data.data.rankList
           } else {
             Dialog.alert({
               message: res.data.msg
@@ -775,85 +308,559 @@ export default {
             })
           }
         })
+      },
+      // 打开海报
+      tobill () {
+        this.popup2 = 0
+        this.playover = false
+        this.$emit('tobill')
+      },
+      handleClickReturnPrevPage () {
+        this.$emit('touchable', true)
+      },
+      showHitEffect (state) {
+        this.isEnd = true
+        this.isHit = state
+        setTimeout(() => {
+          this.isHit = false
+          this.isEnd = false
+        }, 1000)
+      },
+      handleSwipe (evt) {
+        console.log(evt)
+
+        if (evt.angle > 20 || evt.angle < -160) return
+        if (!this.isSwiper) return
+        this.isSwiper = false
+
+        const initPox = [this.initialPosX, this.initialPosY]
+        let target = [60, 200]
+
+        // 通过这个分析方法，得出力量值跟方向
+        // 此时应该知道得分和命中情况，
+        const opt = analysis(evt)
+        // 此方法会计算出得分情况及击中与否，位置等信息
+        const res = generate(opt, this.myscore)
+        // this.angel = res.posititon
+        console.log(this.myscore)
+        const { posititon, hit } = res
+
+        // const hit = 2
+        if (posititon >= 1 && posititon <= 6) {
+          if (hit !== 2) {
+            target = getAreaPointByPos(
+              actualwidth,
+              this.goalwidth,
+              this.goalheight,
+              this.goalbottom,
+              posititon
+            )
+          } else {
+            // 弹出位置模拟，这里只有一些，足够
+            if (posititon === 1 || posititon === 2) {
+              target = [
+                actualwidth * 0.5 - this.goalwidth * 0.5,
+                randomNum(this.goalbottom, this.goalbottom + this.goalheight)
+              ]
+            } else if (posititon === 3) {
+              target = [
+                randomNum(
+                  actualwidth * 0.5 - this.goalwidth * 0.5,
+                  actualwidth * 0.5 + this.goalwidth * 0.5
+                ),
+                this.goalbottom + this.goalheight
+              ]
+            } else if (posititon === 5 || posititon === 6) {
+              target = [
+                actualwidth * 0.5 + this.goalwidth * 0.5,
+                randomNum(this.goalbottom, this.goalbottom + this.goalheight)
+              ]
+            } else {
+              target = getAreaPointByPos(
+                actualwidth,
+                this.goalwidth,
+                this.goalheight,
+                this.goalbottom,
+                posititon
+              )
+            }
+          }
+        } else {
+          target = getOuterPointByPos(
+            actualwidth,
+            this.goalwidth,
+            this.goalheight,
+            this.goalbottom,
+            opt.angle,
+            opt.strength,
+            this.initialPosX,
+            this.initialPosY,
+            posititon
+          )
+        }
+
+        // 连个控制点
+        const c1 = toInt([
+          initPox[0] + (target[0] - initPox[0]) * 0.33,
+          target[1] + 40
+        ])
+        const c2 = toInt([
+          initPox[0] + (target[0] - initPox[0]) * 0.66,
+          target[1] + 60
+        ])
+
+        // console.log(initPox, c1, c2, target)
+        if (this.$refs.soccer) {
+          this.animation(
+            bezier.getBezierPoints(10, initPox, c1, c2, target),
+            res
+          )
+        }
+      },
+      animation (points, data) {
+        this.isRotate = true
+        const len = points.length
+        console.log(len)
+        let index = 0
+        let size = 1
+        const time = 25
+        const soccer = this.$refs.soccer
+
+        // 踢球开始
+        this.triggerStart(data)
+        this.playSound(3)
+        this.timer = setInterval(() => {
+          if (index > len - 1) {
+            clearInterval(this.timer)
+            // soccer.classList.remove('soccer-ani')
+
+            const { hit, posititon } = data
+            const point = points[points.length - 1]
+            // const hit = 1
+            if (hit === 1) {
+              // 弧形动画结束，模拟扑出动画
+              this.showGlove(point, posititon)
+              this.triggerEnd(data)
+              this.playSound(2)
+            } else if (hit === 2) {
+              // 弧形动画结束，模拟门框弹出动画
+              this.frameAni(point, data, size)
+              this.playSound(2)
+            } else {
+              this.triggerEnd(data)
+              if (hit === -1) {
+                this.playSound(2)
+              } else {
+                this.playSound(1)
+                this.putoutAni(point, data, size)
+              }
+            }
+            this.showHitEffect(hit === 0)
+
+            return
+          }
+          // if (!soccer.classList.contains('soccer-ani')) {
+          //   // soccer.classList.add('soccer-ani')
+          // }
+
+          soccer.style.transform = `translate(${this.diameter * -0.5 + points[index][0]}px, ${
+            this.diameter * 0.5 - points[index][1]
+          }px) scale(${size})`
+
+          index++
+
+          if (size >= 0.26) size -= 0.08
+        }, time)
+
+        // 阴影控制
+        const shader = this.$refs.shader
+        shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 40}px`
+        shader.style.left = `${this.initialPosX - 10}px`
+        shader.style.transform = 'translateX(-50%) scaleX(0)'
+        shader.style.opacity = 0
+        shader.style.transition = 'all 160ms linear'
+      },
+      handleReset () {
+        this.isSwiper = true
+        const soccer = this.$refs.soccer
+        soccer.style.display = 'block'
+        soccer.style.transform = `translate(${this.diameter * -0.5 + this.initialPosX}px, ${
+          this.diameter * 0.5 - this.initialPosY
+        }px) scale(1)`
+
+        soccer.style.left = '0px'
+        soccer.style.bottom = '0px'
+
+        const shader = this.$refs.shader
+        shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 10}px`
+        shader.style.left = `${this.initialPosX - 10}px`
+        shader.style.opacity = 1
+        shader.style.transform = 'translateX(-50%) scaleX(1)'
+        shader.style.transition = 'all 0ms linear'
+        console.log('reset')
+      },
+      putoutAni (point, data, size) {
+        // 扑出动画
+        let timer = null
+
+        let _bottomPos = []
+
+        // let _low = false
+        // if (point[1] - this.goalbottom < 50) _low = false
+        // else _low = true
+
+        _bottomPos = toInt([
+          randomNum(
+            point[0] + this.goalwidth * -0.05,
+            point[0] + this.goalwidth * 0.05
+          ),
+          this.goalbottom + 5
+        ])
+        console.log(point, this.goalbottom, _bottomPos)
+        const _cpos = toInt([
+          (_bottomPos[0] + point[0]) * 0.5,
+          point[1] + randomNum(-5, 5)
+        ])
+        const _step =
+          Math.round(((point[1] - _bottomPos[1]) / this.goalheight) * 6) + 3
+        console.log(`_step -- ${_step}`)
+        const _points = bezier.getBezierPoints(_step, point, _cpos, _bottomPos)
+        const len = _points.length
+
+        const time = 30
+        const soccer = this.$refs.soccer
+        let index = 0
+
+        timer = setInterval(() => {
+          if (index > len - 1) {
+            clearInterval(timer)
+            // this.triggerEnd(data)
+            return
+          }
+
+          soccer.style.transform = `translate(${this.diameter * -0.5 + _points[index][0]}px, ${
+            this.diameter * 0.5 - _points[index][1]
+          }px) scale(${size})`
+          index++
+        }, time)
+      },
+      frameAni (point, data, size) {
+        // 弹框动画
+
+        let timer = null
+
+        let _bottomPos = []
+
+        const { posititon } = data
+
+        if (posititon === 1 || posititon === 2) {
+          _bottomPos = toInt([
+            randomNum(
+              point[0] - this.goalwidth * 0.2,
+              point[0] - this.goalwidth * 0.4
+            ),
+            point[1] + randomNum(10, 30)
+          ])
+        } else if (posititon === 3) {
+          _bottomPos = toInt([
+            randomNum(
+              actualwidth * 0.5 - this.goalwidth * 0.2,
+              actualwidth * 0.5 + this.goalwidth * 0.2
+            ),
+            this.goalbottom + this.goalheight + randomNum(30, 70)
+          ])
+        } else if (posititon === 5 || posititon === 6) {
+          _bottomPos = toInt([
+            randomNum(
+              point[0] + this.goalwidth * 0.2,
+              point[0] + this.goalwidth * 0.4
+            ),
+            point[1] + randomNum(10, 30)
+          ])
+        }
+
+        console.log(point, this.goalbottom, _bottomPos)
+        const _cpos = toInt([
+          (_bottomPos[0] + point[0]) * 0.5,
+          point[1] + randomNum(-7, 10)
+        ])
+
+        const _points = bezier.getBezierPoints(6, point, _cpos, _bottomPos)
+        const len = _points.length
+
+        const time = 25
+        const soccer = this.$refs.soccer
+        let index = 0
+
+        timer = setInterval(() => {
+          if (index > len - 1) {
+            clearInterval(timer)
+            soccer.style.display = 'none'
+            this.triggerEnd(data)
+            return
+          }
+
+          soccer.style.transform = `translate(${this.diameter * -0.5 + _points[index][0]}px, ${
+            this.diameter * 0.5 - _points[index][1]
+          }px) scale(${size})`
+          index++
+        }, time)
+      },
+
+      showGlove (position, area) {
+        const glove = this.$refs.glove
+        glove.style.display = 'block'
+        glove.style.width = `${this.diameter}px`
+        glove.style.height = `${this.diameter}px`
+        let rotate = 0
+        if (area === 1 || area === 2) { rotate = -45 } else if (area === 3 || area === 4) { rotate = 0 } else if (area === 5 || area === 6) { rotate = 45 }
+        glove.style.transform = `translate(${this.diameter * -0.5 + position[0]}px, ${
+          this.diameter * 0.5 - position[1]}px) scale(0.35) rotate(${rotate}deg)`
+        setTimeout(() => {
+          glove.style.display = 'none'
+        }, 1200)
+      },
+      // 滑动成绩触发,
+      // 滑动动画开始
+      // 此时已有得分，位置，等信息
+      triggerStart (data) {},
+      // 加分
+      addScore (num) {
+        const s = parseInt(num / 10 % 10)
+        const g = num % 10
+        this.activeNum = [0, s, g]
+        this.isPlay = false
+        this.isPlay = true
+        this.smallnum--
+      },
+      // 足球动画结束,
+      // 滑动动画开始
+      // 得分，位置，等信息同上
+      triggerEnd (data) {
+        console.log(data)
+        this.isRotate = false
+
+        this.myscore += data.score
+        this.index++
+        this.addScore(this.myscore)
+        // if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 11) {
+        //   // 将踢球分数传给接口
+        //   this.postScore()
+        // } else {
+        //   this.addScore(this.myscore)
+        // }
+        setTimeout(() => {
+          this.handleReset()
+          if (this.smallnum === 0) {
+            // 重玩助力
+            this.popup1 = 1
+            // if (this.roleId !== -1 && this.userId !== -1 && this.todayPyayCount !== 1) {
+            //   this.popup1 = 1
+            //   // 将踢球分数传给接口
+            //   // this.postScore()
+            // }
+          }
+        }, 1000)
+      },
+      reset () {
+        this.playover = false
+        this.popup1 = 0
+        this.myscore = 0
+        this.smallnum = 11
+        this.addScore(0)
+      },
+      // 将踢球分数传给后台
+      postScore () {
+        axios({
+          // url: '/api/score/add',
+          url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Scoresubmit',
+          method: 'post',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          data: 'roleId=' + this.roleId + '&' + 'userId=' + this.userId + '&' + 'score=' + this.myscore
+        }).then(res => {
+          this.popup1 = 0
+          if (res.data.code === '1') {
+            // 记分牌累计分数
+            // this.addScore(this.myscore)
+            if (res.data.isWin === 1) {
+              this.popup = 1
+              setTimeout(() => {
+                this.popup = 0
+                this.playover = true
+              }, 6000)
+            } else {
+              // 游戏结束
+              this.playover = true
+            }
+          } else {
+            Dialog.alert({
+              message: res.data.msg
+            }).then(() => {
+              // on close
+            })
+          }
+        })
+      },
+      playSound (state) {
+        const success = this.$refs.success
+        const fail = this.$refs.fail
+        const hit = this.$refs.hit
+
+        switch (state) {
+          case 1:
+            if (typeof WeixinJSBridge === 'object' && typeof WeixinJSBridge.invoke === 'function') { // IOS
+              WeixinJSBridge.invoke('getNetworkType', {}, function (res) {
+                success.play()
+                // alert(hit)
+              })
+            } else { // Android
+              success.play()
+            }
+            break
+          case 2:
+            if (typeof WeixinJSBridge === 'object' && typeof WeixinJSBridge.invoke === 'function') { // IOS
+              WeixinJSBridge.invoke('getNetworkType', {}, function (res) {
+                fail.play()
+                // alert(hit)
+              })
+            } else { // Android
+              fail.play()
+            }
+            break
+          case 3:
+            if (typeof WeixinJSBridge === 'object' && typeof WeixinJSBridge.invoke === 'function') { // IOS
+              WeixinJSBridge.invoke('getNetworkType', {}, function (res) {
+                hit.play()
+                // alert(hit)
+              })
+            } else { // Android
+              hit.play()
+            }
+            break
+        }
+      },
+      // 提交用户信息
+      submit () {
+        if (this.mobile === '') {
+          Dialog.alert({
+            message: '请填写手机号～'
+          }).then(() => {
+            // on close
+          })
+        } else {
+          axios({
+            // url: '/api/user/add',
+            url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Usersubmit',
+            method: 'post',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            data: 'mobile=' + this.mobile + '&' + 'sex=' + '1' + '&' + 'userName=' + this.username
+          }).then(res => {
+            if (res.data.code === '1') {
+              this.popup2 = 0
+              this.todayPyayCount = res.data.data.isTodayPyayCount
+              if (this.todayPyayCount >= 1) {
+                // 今日已提交，明天再来
+                this.popup = 0
+                this.popup3 = 1
+              } else if (this.todayPyayCount >= 0 && this.todayPyayCount < 1) {
+                this.userId = res.data.data.tbUser.userId
+                this.popup = 0
+                this.postScore()
+                // this.$emit('toplay', 1, {
+                //   roleId: this.roleId,
+                //   userId: this.userId,
+                //   todayPyayCount: this.todayPyayCount
+                // })
+              }
+              this.mobile = ''
+              this.username = ''
+            } else {
+              Dialog.alert({
+                message: res.data.msg
+              }).then(() => {
+                // on close
+              })
+            }
+          })
+        }
+      },
+      init (data) {
+        this.roleId = data.roleId
+        if (this.roleId === 2) {
+          this.roleName = '梅西'
+        } else if (this.roleId === 1) {
+          this.roleName = 'C罗'
+        }
+        setTimeout(() => {
+          this.isShowScore = false
+          this.showTip = false
+        }, 2500)
+
+        this.showTip = true
       }
     },
-    init (data) {
-      this.roleId = data.roleId
-      if (this.roleId === 2) {
-        this.roleName = '梅西'
-      } else if (this.roleId === 1) {
-        this.roleName = 'C罗'
-      }
-      setTimeout(() => {
-        this.isShowScore = false
-        this.showTip = false
-      }, 2500)
+    mounted () {
+      // 此处是为了适配点做准备
+      this.diameter = actualwidth * 0.25
+      this.initialPosX = actualwidth * 0.5
+      this.initialPosY = actualwidth * 0.5
 
-      this.showTip = true
+      const soccer = this.$refs.soccer
+      const goal = this.$refs.goal
+      soccer.style.width = `${this.diameter}px`
+      soccer.style.height = `${this.diameter}px`
+      soccer.style.transform = `translate(${this.diameter * -0.5 + this.initialPosX}px, ${
+        this.diameter * 0.5 - this.initialPosY
+      }px)`
+      // soccer.style.left = `${this.initialPosX}px`
+      // soccer.style.bottom = `${this.initialPosY}px`
+      soccer.style.left = '0px'
+      soccer.style.bottom = '0px'
+
+      const virturl = this.$refs.virturl
+      virturl.style.width = `${this.diameter}px`
+      virturl.style.height = `${this.diameter}px`
+      virturl.style.transform = `translate(${this.diameter * -0.5}px, ${
+        this.diameter * 0.5
+      }px)`
+      virturl.style.left = `${this.initialPosX}px`
+      virturl.style.bottom = `${this.initialPosY}px`
+
+      const shader = this.$refs.shader
+      shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 10}px`
+      shader.style.left = `${this.initialPosX - 10}px`
+
+      // 足球框宽 高 底
+      this.goalwidth = actualwidth * 0.8
+      this.goalheight = this.goalwidth * 0.557
+      this.goalbottom = actualheight * 0.4
+
+      goal.style.width = `${this.goalwidth}px`
+      goal.style.height = `${this.goalheight}px`
+      goal.style.bottom = `${this.goalbottom}px`
+
+      this.goalLT = toInt([
+        actualwidth * 0.5 - this.goalwidth * 0.5,
+        this.goalheight + this.goalbottom
+      ])
+      this.goalLB = toInt([
+        actualwidth * 0.5 - this.goalwidth * 0.5,
+        this.goalbottom
+      ])
+      this.goalRT = toInt([
+        actualwidth * 0.5 + this.goalwidth * 0.5,
+        this.goalheight + this.goalbottom
+      ])
+      this.goalRB = toInt([
+        actualwidth * 0.5 + this.goalwidth * 0.5,
+        this.goalbottom
+      ])
+      console.log(this.goalLT, this.goalLB, this.goalRT, this.goalRB)
+
+      goal.style.transform = `translateX(${this.goalwidth * -0.5}px)`
+      goal.style.left = `${actualwidth * 0.5}px`
     }
-  },
-  mounted () {
-    // 此处是为了适配点做准备
-    this.diameter = actualwidth * 0.25
-    this.initialPosX = actualwidth * 0.5
-    this.initialPosY = actualwidth * 0.5
-
-    const soccer = this.$refs.soccer
-    const goal = this.$refs.goal
-    soccer.style.width = `${this.diameter}px`
-    soccer.style.height = `${this.diameter}px`
-    soccer.style.transform = `translate(${this.diameter * -0.5 + this.initialPosX}px, ${
-      this.diameter * 0.5 - this.initialPosY
-    }px)`
-    // soccer.style.left = `${this.initialPosX}px`
-    // soccer.style.bottom = `${this.initialPosY}px`
-    soccer.style.left = '0px'
-    soccer.style.bottom = '0px'
-
-    const virturl = this.$refs.virturl
-    virturl.style.width = `${this.diameter}px`
-    virturl.style.height = `${this.diameter}px`
-    virturl.style.transform = `translate(${this.diameter * -0.5}px, ${
-      this.diameter * 0.5
-    }px)`
-    virturl.style.left = `${this.initialPosX}px`
-    virturl.style.bottom = `${this.initialPosY}px`
-
-    const shader = this.$refs.shader
-    shader.style.bottom = `${this.initialPosY - this.diameter * 0.5 + 10}px`
-    shader.style.left = `${this.initialPosX - 10}px`
-
-    // 足球框宽 高 底
-    this.goalwidth = actualwidth * 0.8
-    this.goalheight = this.goalwidth * 0.557
-    this.goalbottom = actualheight * 0.4
-
-    goal.style.width = `${this.goalwidth}px`
-    goal.style.height = `${this.goalheight}px`
-    goal.style.bottom = `${this.goalbottom}px`
-
-    this.goalLT = toInt([
-      actualwidth * 0.5 - this.goalwidth * 0.5,
-      this.goalheight + this.goalbottom
-    ])
-    this.goalLB = toInt([
-      actualwidth * 0.5 - this.goalwidth * 0.5,
-      this.goalbottom
-    ])
-    this.goalRT = toInt([
-      actualwidth * 0.5 + this.goalwidth * 0.5,
-      this.goalheight + this.goalbottom
-    ])
-    this.goalRB = toInt([
-      actualwidth * 0.5 + this.goalwidth * 0.5,
-      this.goalbottom
-    ])
-    console.log(this.goalLT, this.goalLB, this.goalRT, this.goalRB)
-
-    goal.style.transform = `translateX(${this.goalwidth * -0.5}px)`
-    goal.style.left = `${actualwidth * 0.5}px`
   }
-}
 </script>
 
 <style lang="scss" scoped>
@@ -876,7 +883,7 @@ export default {
       margin-left: -150px;
       z-index: 1110;
       padding-top: 40px;
-      overflow: scroll;
+      /*position: relative;*/
       .closerule{
         position: absolute;
         left: 10px;
@@ -886,9 +893,17 @@ export default {
         background-image: url("../../assets/imgs/closerule.png");
         background-size: 100%;
       }
+      .rank-list-area {
+        height: 375px;
+        overflow-y: scroll;
+        .rank-list-wraper {
+        }
+      }
       .vantRow{
         margin: 0 7px 7px;
-        display: block;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
         width: 280px;
         font-size: 15px;
         height: 28px;
@@ -898,35 +913,46 @@ export default {
         border-radius: 4px;
         .col1{
           width: 13%;
-          display: block;
-          float:left;
+          display: flex;
+          // float:left;
           div{
             text-align: center;
-            line-height: 20px;
+            // line-height: 20px;
             width: 20px;
             height: 20px;
             background-color: #636363;
             border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
           }
         }
         .col2{
           width: 25%;
           display: block;
-          float:left;
+          // float:left;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          word-break: break-all;
         }
         .col3{
           width: 36%;
           display: block;
-          float:left;
+          // float:left;
         }
         .col4{
           width: 26%;
-          display: block;
-          float:left;
+          display: flex;
+          // float:left;
+
           div{
             background-color: #6d6d6d;
             text-align: center;
-            line-height: 20px;
+            // line-height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 70px;
             height: 20px;
             border-radius: 5px;
