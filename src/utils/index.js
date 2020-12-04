@@ -228,38 +228,38 @@ const positions = {
   lt: {
     hitrate: 50,
     score: 10,
-    putout: 20,
-    frame: 15
+    putout: 15,
+    frame: 10
   },
   lb: {
     hitrate: 70,
     score: 7,
-    putout: 25,
-    frame: 15
+    putout: 18,
+    frame: 10
   },
   mt: {
     hitrate: 90,
     score: 5,
-    putout: 20,
-    frame: 25
+    putout: 13,
+    frame: 15
   },
   mb: {
     hitrate: 90,
     score: 5,
-    putout: 30,
+    putout: 220,
     frame: 0
   },
   rt: {
     hitrate: 50,
     score: 10,
-    putout: 20,
-    frame: 15
+    putout: 15,
+    frame: 10
   },
   rb: {
     hitrate: 70,
     score: 7,
-    putout: 25,
-    frame: 15
+    putout: 18,
+    frame: 10
   }
 }
 
