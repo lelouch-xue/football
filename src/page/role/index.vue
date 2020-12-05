@@ -1,7 +1,7 @@
 <template>
   <div class="role-page">
     <div class="return" @click="toGuide"></div>
-    <div class="next" @click="toplay"></div>
+<!--    <div class="next" @click="toplay"></div>-->
     <div class="roles">
       <div class="fbimg"></div>
       <div class="mx-abtn" v-if="isMx" @click="setrole(mxid)"></div>
