@@ -1,7 +1,6 @@
 <template>
   <div class="play-page">
     <div class="next" @click="tobill"></div>
-    <div v-if="playover" class="showrank" @click="showrank"></div>
     <div class="lawn">
       <!--      <div class="goal"></div>-->
       <div class="scoreboard">
@@ -148,7 +147,8 @@
     <div class="bg4" v-if="playover">
       <div class="ewm"></div>
       <div class="playover">
-        <div class="tips">恭喜您，为{{roleName}}助力{{myscore}}分，明天继续！</div>
+        <div class="tips">恭喜您，今天为{{roleName}}助力{{myscore}}分，明天继续！</div>
+        <div class="showrank" @click="showrank"></div>
       </div>
       <!--这里是半透明背景层-->
       <div class="over"></div>
@@ -294,7 +294,7 @@ export default {
       this.popup4 = 1
       axios({
         // url: '/api/user/add',
-        url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Ranklist',
+        url: 'https://interact.5club.cctv.cn/hudong/api.php/dqdz/Ranklist',
         method: 'post',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         data: 'userId=' + this.userId
@@ -678,7 +678,7 @@ export default {
     postScore () {
       axios({
         // url: '/api/score/add',
-        url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Scoresubmit',
+        url: 'https://interact.5club.cctv.cn/hudong/api.php/dqdz/Scoresubmit',
         method: 'post',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         data: 'roleId=' + this.roleId + '&' + 'userId=' + this.userId + '&' + 'score=' + this.myscore
@@ -755,7 +755,7 @@ export default {
       } else {
         axios({
           // url: '/api/user/add',
-          url: 'http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Usersubmit',
+          url: 'https://interact.5club.cctv.cn/hudong/api.php/dqdz/Usersubmit',
           method: 'post',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           data: 'mobile=' + this.mobile + '&' + 'sex=' + '1' + '&' + 'userName=' + this.username
@@ -973,16 +973,7 @@ export default {
         border: 0;
       }
     }
-    .showrank{
-      width: 79px;
-      height: 32px;
-      background-image: url("../../assets/imgs/zlbbtn.png");
-      background-size: 100% 100%;
-      position: absolute;
-      top:22px;
-      left:20px;
-      z-index: 1010;
-    }
+
     .next{
       width: 75px;
       height: 35px;
@@ -1113,13 +1104,13 @@ export default {
     }
     .win {
       position: absolute;
-      height: 240px;
-      width: 240px;
+      height: 300px;
+      width: 300px;
       border-radius: 0.25rem;
       left: 50%;
       top: 50%;
-      margin-top: -120px;
-      margin-left: -120px;
+      margin-top: -150px;
+      margin-left: -150px;
       z-index: 1020;
       background-image: url("../../assets/imgs/win.png");
       background-size: 100%;
@@ -1158,6 +1149,17 @@ export default {
           line-height: 30px;
           padding: 5px 20px;
           color:#3f3d3a;
+        }
+        .showrank{
+          width: 120px;
+          height: 40px;
+          background-image: url("../../assets/imgs/zlbbtn.png");
+          background-size: 100% 100%;
+          position: absolute;
+          bottom:-40px;
+          left: 50%;
+          margin-left: -60px;
+          z-index: 1010;
         }
       }
       .ewm {

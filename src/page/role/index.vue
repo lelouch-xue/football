@@ -61,7 +61,7 @@ export default {
   methods: {
     init () {
       // axios('/api/role/list', {
-      axios('http://123.56.2.234/c5_201706/activitiesApi.php/dqdz/Rolelist', {
+      axios('https://interact.5club.cctv.cn/hudong/api.php/dqdz/Rolelist', {
         params: {}
       }).then(res => {
         if (res.data.code !== '1') {
