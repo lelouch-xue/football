@@ -867,6 +867,21 @@ export default {
 
     goal.style.transform = `translateX(${this.goalwidth * -0.5}px)`
     goal.style.left = `${actualwidth * 0.5}px`
+
+    const audio = () => {
+      const success = this.$refs.success
+      const fail = this.$refs.fail
+      const hit = this.$refs.hit
+      success.play()
+      success.pause()
+      fail.play()
+      fail.pause()
+      hit.play()
+      hit.pause()
+      // alert(133)
+      document.removeEventListener('touchstart', audio, false)
+    }
+    document.addEventListener('touchstart', audio, false)
   }
 }
 </script>
