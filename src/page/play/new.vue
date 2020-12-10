@@ -314,6 +314,9 @@ export default {
     },
     // 打开海报
     tobill () {
+      this.popup = 0
+      this.popup1 = 0
+      this.popup3 = 0
       this.popup2 = 0
       this.playover = false
       this.$emit('tobill')
