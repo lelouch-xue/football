@@ -17,6 +17,27 @@
         <div class="closerule" @click="closepopup"></div>
         <div class="clscore">{{clscore}}分</div>
         <div class="mxscore">{{mxscore}}分</div>
+        <div class="vantRow thvant">
+          <div class="col1">名次</div>
+          <div class="col2">昵称</div>
+          <div class="col3">手机号</div>
+          <div class="col4">分数</div>
+        </div>
+        <section class="rank-list-area">
+          <div class="rank-list-wraper">
+            <div class="vantRow" v-for="(item, index) in rankList" :key="item.userOrder">
+              <div class="col1">
+                <div :style="`background-color: ${ index === 0 ? '#ff9900': index === 1 ? '#a59d92': index ===2 ? '#b7868b': '#636363'}`">{{item.userOrder}}</div>
+              </div>
+              <div class="col2">{{item.userName?item.userName:'--'}}</div>
+              <div class="col3">{{item.mobile}}</div>
+              <div class="col4">
+                <div>{{item.score}}</div>
+              </div>
+            </div>
+          </div>
+
+        </section>
       </div>
       <!--这里是半透明背景层-->
       <div class="over"></div>
@@ -43,7 +64,8 @@ export default {
       // userId: -1,
       popup3: 0,
       clscore: 0,
-      mxscore: 0
+      mxscore: 0,
+      rankList: []
     }
   },
   created () {
@@ -111,6 +133,23 @@ export default {
     },
     showjf () {
       this.popup3 = 1
+      axios({
+        // url: '/api/user/add',
+        url: 'https://interact.5club.cctv.cn/hudong/api.php/dqdz/Ranklist',
+        method: 'post',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      }).then(res => {
+        if (res.data.code === '1') {
+          console.log('data', res.data)
+          this.rankList = res.data.data.rankList
+        } else {
+          Dialog.alert({
+            message: res.data.msg
+          }).then(() => {
+            // on close
+          })
+        }
+      })
     }
   }
 }
@@ -209,7 +248,7 @@ export default {
   }
   .zlbg{
     position: absolute;
-    height: 216px;
+    height: 493px;
     width: 280px;
     border-radius: 0.25rem;
     left: 50%;
@@ -228,13 +267,26 @@ export default {
       background-image: url("../../assets/imgs/closerule.png");
       background-size: 100%;
     }
+    .rank-list-area {
+      width: 250px;
+      height: 260px;
+      overflow-y: scroll;
+      /*background-color: #fca82a;*/
+      /*border: 2px solid #000;*/
+      /*border-radius: 5px;*/
+      position: absolute;
+      top: 40%;
+      left:10px;
+      .rank-list-wraper {
+      }
+    }
     .clscore{
       width: 50%;
       height: 50px;
       text-align: center;
       position: absolute;
       left:0;
-      bottom: 5%;
+      top: 28%;
       color: #3f3d3a;
       font-size: 20px;
       font-weight: 500;
@@ -245,10 +297,77 @@ export default {
       text-align: center;
       position: absolute;
       left:50%;
-      bottom: 5%;
+      top: 28%;
       color: #3f3d3a;
       font-size: 20px;
       font-weight: 500;
+    }
+    .vantRow{
+      margin: 3px 4px 0;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 242px;
+      font-size: 14px;
+      height: 24px;
+      padding: 0 1px;
+      border: 1px solid #686868;
+      background-color: #d0d0d0;
+      border-radius: 4px;
+      .col1{
+        width: 13%;
+        display: flex;
+        // float:left;
+        div{
+          text-align: center;
+          // line-height: 20px;
+          width: 20px;
+          height: 20px;
+          background-color: #636363;
+          border-radius: 5px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+      .col2{
+        width: 25%;
+        display: block;
+        // float:left;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-break: break-all;
+      }
+      .col3{
+        width: 36%;
+        display: block;
+        // float:left;
+      }
+      .col4{
+        width: 26%;
+        display: flex;
+        // float:left;
+
+        div{
+          background-color: #6d6d6d;
+          text-align: center;
+          // line-height: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 65px;
+          height: 20px;
+          border-radius: 5px;
+        }
+      }
+    }
+    .thvant{
+      position: absolute;
+      left: 25px;
+      top: 34%;
+      background: none;
+      border: 0;
     }
   }
   .over {
