@@ -6,6 +6,7 @@ const { js_ver, css_ver, img_ver } = {
   css_ver: `2020${Version}`,
   img_ver: `2020${Version}`
 }
+
 module.exports = {
   // 部署应用包时的基本 URL,用法和 webpack 本身的 output.publicPath 一致
   publicPath: './',
